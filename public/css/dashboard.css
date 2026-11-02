@@ -92,66 +92,216 @@ body {
   box-shadow: 0 0 15px rgba(255, 106, 0, 0.4);
 }
 
-/* Multi-App Switcher Bar (APP-1, APP-2, etc.) */
-.app-switcher-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Sleek Professional App Switcher Dropdown (Vercel & Supabase Style) */
+.app-dropdown-wrap {
+  position: relative;
+  z-index: 150;
 }
 
-.app-pills-list {
+.app-dropdown-trigger {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 106, 0, 0.35);
+  border-radius: 14px;
+  padding: 6px 14px 6px 10px;
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.app-pill {
-  background: #1e2232;
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.84rem;
-  font-weight: 700;
+  justify-content: space-between;
+  gap: 14px;
   cursor: pointer;
-  transition: 0.25s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  transition: all 0.25s ease;
+  min-width: 220px;
 }
 
-.app-pill:hover {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.2);
-  background: #252b3d;
-}
-
-.app-pill.active {
-  background: linear-gradient(135deg, rgba(255, 106, 0, 0.2), rgba(238, 9, 121, 0.2));
+.app-dropdown-trigger:hover, .app-dropdown-trigger.open {
+  background: rgba(255, 106, 0, 0.12);
   border-color: var(--brand-orange);
-  color: #ff9900;
-  box-shadow: 0 0 14px rgba(255, 106, 0, 0.3);
+  box-shadow: 0 0 16px rgba(255, 106, 0, 0.25);
 }
 
-.btn-create-app {
-  background: rgba(255, 106, 0, 0.1);
-  border: 1px dashed var(--brand-orange);
-  color: #ff8833;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.25s;
+.app-trigger-left {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
+  text-align: left;
 }
 
-.btn-create-app:hover {
+.app-trigger-cube {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(255, 106, 0, 0.2), rgba(238, 9, 121, 0.2));
+  border: 1px solid rgba(255, 106, 0, 0.4);
+  color: #ff9900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.app-trigger-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-trigger-sub {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.app-trigger-name {
+  font-size: 0.88rem;
+  color: #ffffff;
+  font-weight: 700;
+  white-space: nowrap;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-trigger-arrow {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  transition: transform 0.25s ease;
+}
+
+.app-dropdown-trigger.open .app-trigger-arrow {
+  transform: rotate(180deg);
+  color: var(--brand-orange);
+}
+
+/* Floating Glass Dropdown Menu */
+.app-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 280px;
+  background: #141722;
+  border: 1.5px solid rgba(255, 106, 0, 0.4);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 106, 0, 0.2);
+  display: none;
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(16px);
+}
+
+.app-dropdown-menu.show {
+  display: block;
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.app-dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.6px;
+}
+
+.app-badge-count {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ff9900;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+}
+
+.app-dropdown-items {
+  max-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-dropdown-item {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #e2e8f0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: 0.2s;
+  text-align: left;
+}
+
+.app-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.app-dropdown-item.active {
+  background: rgba(255, 106, 0, 0.15);
+  color: #ff9900;
+  border: 1px solid rgba(255, 106, 0, 0.3);
+}
+
+.app-item-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.app-item-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-item-check {
+  color: #10b981;
+  font-size: 1.15rem;
+}
+
+.app-dropdown-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 8px 0;
+}
+
+.app-dropdown-actions {
+  padding-top: 4px;
+}
+
+.app-dropdown-btn-create {
+  width: 100%;
+  background: linear-gradient(135deg, rgba(255, 106, 0, 0.15), rgba(238, 9, 121, 0.15));
+  border: 1px dashed var(--brand-orange);
+  color: #ff9900;
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: 0.25s;
+}
+
+.app-dropdown-btn-create:hover {
   background: var(--brand-orange);
   color: #fff;
-  box-shadow: 0 0 15px rgba(255, 106, 0, 0.4);
+  border-style: solid;
+  box-shadow: 0 0 14px rgba(255, 106, 0, 0.4);
 }
 
 .nav-right {

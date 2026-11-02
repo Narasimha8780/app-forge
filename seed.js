@@ -5,7 +5,7 @@ const { connectDB } = require('./config/db');
 
 async function seed() {
   await connectDB();
-  console.log('🌱 Seeding demo data for AppForge Platform...');
+  console.log('🌱 Seeding demo data for DevMatrix Platform...');
 
   try {
     let demoUser = await User.findByUsername('demouser');
@@ -14,22 +14,19 @@ async function seed() {
         firstName: 'Alex',
         lastName: 'Developer',
         username: 'demouser',
-        email: 'alex@appforge.io',
+        email: 'alex@devmatrix.io',
         mobile: '+15551234567',
         password: 'Password123'
       });
       console.log('✓ Created demo user: demouser (Password123)');
     }
 
-    // Ensure user has APP-1 and APP-2
+    // Ensure user has their first app based on username
     const existingProjects = await Project.findByUserId(demoUser._id);
     if (existingProjects.length === 0) {
-      await Project.createDefault(demoUser._id, 'APP-1');
-      await Project.createDefault(demoUser._id, 'APP-2');
-      console.log('✓ Created initial apps: APP-1 and APP-2');
-    } else if (existingProjects.length === 1) {
-      await Project.createDefault(demoUser._id, 'APP-2');
-      console.log('✓ Added second app: APP-2');
+      await Project.createDefault(demoUser._id, `${demoUser.username}-app`);
+      await Project.createDefault(demoUser._id, `${demoUser.username}-api-2`);
+      console.log(`✓ Created initial apps: ${demoUser.username}-app and ${demoUser.username}-api-2`);
     }
 
     // Sample contact message

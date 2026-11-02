@@ -1,5 +1,5 @@
 // =========================================================
-// AppForge - Landing Page Interactions & Contact API
+// DevMatrix - Landing Page Interactions & Contact API
 // =========================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Update navbar based on login status
 function checkAuthNavbar() {
-  const token = localStorage.getItem('appforge_token');
-  const userJson = localStorage.getItem('appforge_user');
+  const token = localStorage.getItem('devmatrix_token') || localStorage.getItem('appforge_token');
+  const userJson = localStorage.getItem('devmatrix_user') || localStorage.getItem('appforge_user');
   const navAuthActions = document.getElementById('navAuthActions');
 
   if (token && userJson && navAuthActions) {

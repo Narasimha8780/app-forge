@@ -1,7 +1,7 @@
 {
-  "name": "appforge-platform",
+  "name": "devmatrix-platform",
   "version": "1.0.0",
-  "description": "End-to-End App Development, Automated 7-Stage CI/CD Pipeline & Cloud Setup Platform",
+  "description": "DevMatrix - End-to-End App Development, Multi-App Management & Automated 8-Stage CI/CD Pipeline",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

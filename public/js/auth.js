@@ -1,5 +1,5 @@
 // =========================================================
-// AppForge - Auth Logic (Video 1 Sliding Controller & API)
+// DevMatrix - Auth Logic (Video 1 Sliding Controller & API)
 // =========================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const registerSubmitBtn = document.getElementById('registerSubmitBtn');
 
   // Check if user is already signed in
-  const existingToken = localStorage.getItem('appforge_token');
+  const existingToken = localStorage.getItem('devmatrix_token') || localStorage.getItem('appforge_token');
   if (existingToken) {
     // Verify token validity
     fetch('/api/auth/me', {
@@ -92,8 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (data.success) {
         showAlert(loginAlert, 'success', 'Login successful! Redirecting to dashboard...');
-        localStorage.setItem('appforge_token', data.token);
-        localStorage.setItem('appforge_user', JSON.stringify(data.user));
+        localStorage.setItem('devmatrix_token', data.token);
+        localStorage.setItem('devmatrix_user', JSON.stringify(data.user));
 
         setTimeout(() => {
           window.location.href = '/dashboard';
@@ -162,8 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (data.success) {
         showAlert(registerAlert, 'success', 'Account registered successfully! Redirecting to dashboard...');
-        localStorage.setItem('appforge_token', data.token);
-        localStorage.setItem('appforge_user', JSON.stringify(data.user));
+        localStorage.setItem('devmatrix_token', data.token);
+        localStorage.setItem('devmatrix_user', JSON.stringify(data.user));
 
         setTimeout(() => {
           window.location.href = '/dashboard';

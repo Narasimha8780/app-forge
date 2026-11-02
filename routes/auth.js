@@ -4,7 +4,7 @@ const User = require('../models/User');
 const { Project } = require('../models/Project');
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'appforge_super_secret_jwt_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET || 'devmatrix_super_secret_jwt_key_2026';
 
 // Helper to sign JWT
 function generateToken(user) {
@@ -71,14 +71,15 @@ router.post('/register', async (req, res) => {
       password
     });
 
-    // Auto-create initial project with the 7-stage pipeline
-    await Project.createDefault(newUser._id, `${newUser.firstName}'s Production App`);
+    // Auto-create first app based on username (e.g. narasimha-app)
+    const initialAppName = `${newUser.username}-app`;
+    await Project.createDefault(newUser._id, initialAppName);
 
     const token = generateToken(newUser);
 
     return res.status(201).json({
       success: true,
-      message: 'Registration successful! Welcome to AppForge.',
+      message: 'Registration successful! Welcome to DevMatrix.',
       token,
       user: {
         id: newUser._id,
@@ -124,10 +125,10 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Ensure user has at least one project for the 7-step pipeline dashboard
+    // Ensure user has at least one project (first app created based on username)
     const userProjects = await Project.findByUserId(user._id);
     if (userProjects.length === 0) {
-      await Project.createDefault(user._id, `${user.firstName}'s Production App`);
+      await Project.createDefault(user._id, `${user.username}-app`);
     }
 
     const token = generateToken(user);

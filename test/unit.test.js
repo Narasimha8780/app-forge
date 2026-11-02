@@ -5,14 +5,14 @@ const Contact = require('../models/Contact');
 const { getStatus } = require('../config/db');
 
 async function runUnitTests() {
-  console.log('🧪 Starting AppForge Enhanced In-Process Test Suite...\n');
+  console.log('🧪 Starting DevMatrix Enhanced In-Process Test Suite...\n');
 
   try {
     // 1. Test Database Status
     console.log('Test 1: Verify Database Configuration & Fallback Engine');
     const dbStatus = getStatus();
-    assert.strictEqual(dbStatus.uri, 'mongodb://127.0.0.1:27017/appforge_db');
-    console.log('✓ Database target verified: localhost:27017 (appforge_db)\n');
+    assert.strictEqual(dbStatus.uri, 'mongodb://127.0.0.1:27017/devmatrix_db');
+    console.log('✓ Database target verified: localhost:27017 (devmatrix_db)\n');
 
     // 2. Test User Creation with Required Fields
     console.log('Test 2: Create User with First, Last, Unique Username, Email & Mobile');
@@ -35,22 +35,23 @@ async function runUnitTests() {
     assert.strictEqual(user.mobile, userData.mobile);
     console.log('✓ User created successfully with all required credentials\n');
 
-    // 3. Test Multi-App Creation (APP-1, APP-2, etc.)
-    console.log('Test 3: Multi-App Creation (APP-1 & APP-2)');
-    const app1 = await Project.createDefault(user._id, 'APP-1');
+    // 3. Test Multi-App Creation (First app based on username)
+    console.log('Test 3: First App Created Based on Username & Multiple Apps');
+    const firstAppName = `${user.username}-app`;
+    const app1 = await Project.createDefault(user._id, firstAppName);
     assert.ok(app1._id);
-    assert.strictEqual(app1.name, 'APP-1');
+    assert.strictEqual(app1.name, firstAppName);
 
-    const app2 = await Project.createDefault(user._id, 'APP-2');
+    const app2 = await Project.createDefault(user._id, `${user.username}-service-2`);
     assert.ok(app2._id);
-    assert.strictEqual(app2.name, 'APP-2');
+    assert.strictEqual(app2.name, `${user.username}-service-2`);
 
     const userApps = await Project.findByUserId(user._id);
     assert.strictEqual(userApps.length, 2, 'User should have 2 apps created');
-    console.log('✓ Successfully created multiple apps: APP-1 and APP-2\n');
+    console.log(`✓ First app created based on username (${firstAppName}) & multi-app verified\n`);
 
     // 4. Test Modifying App Name (Rename)
-    console.log('Test 4: Modify App Name (Rename APP-1 -> Storefront API)');
+    console.log('Test 4: Modify App Name (Rename to Storefront API)');
     const renamed = await Project.updateName(app1._id, 'Storefront API');
     assert.strictEqual(renamed, 'Storefront API');
     const app1Fresh = await Project.findById(app1._id);

@@ -32,7 +32,7 @@ app.get('/api/health', (req, res) => {
 
   return res.json({
     status: 'online',
-    appName: 'AppForge Platform',
+    appName: 'DevMatrix Platform',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
     uptime: `${Math.floor(uptimeSeconds / 60)}m ${uptimeSeconds % 60}s`,
@@ -42,7 +42,7 @@ app.get('/api/health', (req, res) => {
     },
     database: {
       target: 'localhost:27017',
-      name: 'appforge_db',
+      name: 'devmatrix_db',
       connected: dbStatus.connectedToMongo,
       fallbackActive: dbStatus.fallbackActive,
       driver: 'mongodb-native-client',
@@ -90,12 +90,12 @@ async function startServer() {
   await connectDB();
   app.listen(PORT, () => {
     console.log(`====================================================`);
-    console.log(`  🚀 AppForge Platform Server is RUNNING!`);
+    console.log(`  🚀 DevMatrix Platform Server is RUNNING!`);
     console.log(`  🌐 Website URL:   http://localhost:${PORT}`);
     console.log(`  🔐 Auth Page:     http://localhost:${PORT}/auth`);
     console.log(`  📊 Dashboard:     http://localhost:${PORT}/dashboard`);
     console.log(`  🩺 Health Check:  http://localhost:${PORT}/api/health`);
-    console.log(`  🍃 MongoDB:       mongodb://127.0.0.1:27017/appforge_db`);
+    console.log(`  🍃 MongoDB:       mongodb://127.0.0.1:27017/devmatrix_db`);
     console.log(`====================================================`);
   });
 }

@@ -1,5 +1,5 @@
 // =========================================================
-// AppForge - Dashboard Engine (8-Stage Pipeline & Multi-App)
+// DevMatrix - Dashboard Engine (8-Stage Pipeline & Multi-App)
 // APP-1, APP-2, Inline Rename, WhatsApp API Hub
 // =========================================================
 
@@ -9,9 +9,10 @@ let currentStages = [];
 let currentEnvVars = [];
 let currentIntegrations = [];
 let isPipelineRunning = false;
+let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const token = localStorage.getItem('appforge_token');
+  const token = localStorage.getItem('devmatrix_token') || localStorage.getItem('appforge_token');
   if (!token) {
     window.location.href = '/auth';
     return;
@@ -73,20 +74,21 @@ async function loadUserData(token) {
     });
     const data = await res.json();
     if (!data.success) {
+      localStorage.removeItem('devmatrix_token');
       localStorage.removeItem('appforge_token');
       window.location.href = '/auth';
       return;
     }
 
-    const u = data.user;
-    document.getElementById('userDisplayName').textContent = `${u.firstName} ${u.lastName}`;
-    document.getElementById('userAvatar').textContent = u.firstName ? u.firstName.charAt(0).toUpperCase() : 'U';
+    currentUser = data.user;
+    document.getElementById('userDisplayName').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+    document.getElementById('userAvatar').textContent = currentUser.firstName ? currentUser.firstName.charAt(0).toUpperCase() : 'U';
   } catch (err) {
     console.error('Error loading user data:', err);
   }
 }
 
-// Load All Projects (APP-1, APP-2, etc.)
+// Load All Projects
 async function loadAllProjects(token, selectProjectId = null) {
   try {
     const res = await fetch('/api/projects', {
@@ -105,7 +107,7 @@ async function loadAllProjects(token, selectProjectId = null) {
         currentProject = userProjects.find(p => p._id === currentProject._id) || userProjects[0];
       }
 
-      renderAppPills();
+      renderAppDropdown();
       displayActiveAppDetails();
     }
   } catch (err) {
@@ -113,26 +115,52 @@ async function loadAllProjects(token, selectProjectId = null) {
   }
 }
 
-// Render App Switcher Pills (APP-1, APP-2, etc.)
-function renderAppPills() {
-  const container = document.getElementById('appPillsList');
-  container.innerHTML = '';
+// Render App Switcher Dropdown (Vercel & Supabase Style)
+function renderAppDropdown() {
+  const dropdownItems = document.getElementById('appDropdownItems');
+  const activeNameElem = document.getElementById('dropdownActiveAppName');
+  const countBadge = document.getElementById('appCountBadge');
 
-  userProjects.forEach((proj, idx) => {
-    const pill = document.createElement('button');
+  if (activeNameElem && currentProject) {
+    activeNameElem.textContent = currentProject.name;
+  }
+  if (countBadge) {
+    countBadge.textContent = `${userProjects.length} ${userProjects.length === 1 ? 'App' : 'Apps'}`;
+  }
+
+  if (!dropdownItems) return;
+  dropdownItems.innerHTML = '';
+
+  userProjects.forEach(proj => {
+    const item = document.createElement('button');
+    item.type = 'button';
     const isActive = currentProject && currentProject._id === proj._id;
-    pill.className = `app-pill ${isActive ? 'active' : ''}`;
-    pill.innerHTML = `<i class='bx bx-cube-alt'></i> <span>${proj.name || 'APP-' + (idx + 1)}</span>`;
-    
-    pill.addEventListener('click', () => {
+    item.className = `app-dropdown-item ${isActive ? 'active' : ''}`;
+    item.innerHTML = `
+      <div class="app-item-info">
+        <i class='bx bx-cube-alt' style="font-size: 1.15rem; color: ${isActive ? '#ff9900' : '#94a3b8'};"></i>
+        <span class="app-item-name">${proj.name}</span>
+      </div>
+      ${isActive ? `<i class='bx bx-check app-item-check'></i>` : ''}
+    `;
+
+    item.addEventListener('click', () => {
       currentProject = proj;
-      renderAppPills();
+      renderAppDropdown();
       displayActiveAppDetails();
-      showToast(`Switched to ${currentProject.name}`);
+      closeDropdown();
+      showToast(`Switched to: ${currentProject.name}`);
     });
 
-    container.appendChild(pill);
+    dropdownItems.appendChild(item);
   });
+}
+
+function closeDropdown() {
+  const menu = document.getElementById('appDropdownMenu');
+  const trigger = document.getElementById('appDropdownTrigger');
+  if (menu) menu.classList.remove('show');
+  if (trigger) trigger.classList.remove('open');
 }
 
 // Display Details for the currently selected App
@@ -427,18 +455,50 @@ window.toggleIntegration = async function(idx, isChecked) {
 function setupEventListeners(token) {
   // Logout
   document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('devmatrix_token');
+    localStorage.removeItem('devmatrix_user');
     localStorage.removeItem('appforge_token');
     localStorage.removeItem('appforge_user');
     window.location.href = '/auth';
   });
 
-  // Open Create App Modal
+  // App Switcher Dropdown Trigger
+  const appDropdownTrigger = document.getElementById('appDropdownTrigger');
+  const appDropdownMenu = document.getElementById('appDropdownMenu');
+
+  if (appDropdownTrigger && appDropdownMenu) {
+    appDropdownTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isShowing = appDropdownMenu.classList.contains('show');
+      if (isShowing) {
+        closeDropdown();
+      } else {
+        appDropdownMenu.classList.add('show');
+        appDropdownTrigger.classList.add('open');
+      }
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.app-dropdown-wrap')) {
+        closeDropdown();
+      }
+    });
+  }
+
+  // Open Create App Modal (from Dropdown or Header)
   const createAppModal = document.getElementById('createAppModal');
-  document.getElementById('openCreateAppBtn').addEventListener('click', () => {
-    const nextNum = userProjects.length + 1;
-    document.getElementById('newAppNameInput').value = `APP-${nextNum}`;
-    createAppModal.classList.add('open');
-  });
+  const openCreateAppBtn = document.getElementById('openCreateAppBtn');
+  if (openCreateAppBtn) {
+    openCreateAppBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeDropdown();
+      const prefix = currentUser && currentUser.username ? currentUser.username : 'app';
+      const nextNum = userProjects.length + 1;
+      document.getElementById('newAppNameInput').value = `${prefix}-app-${nextNum}`;
+      createAppModal.classList.add('open');
+    });
+  }
 
   document.getElementById('closeCreateAppModal').addEventListener('click', () => {
     createAppModal.classList.remove('open');

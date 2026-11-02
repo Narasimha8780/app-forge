@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Developer Pipeline Dashboard | AppForge Studio</title>
+  <title>Developer Pipeline Dashboard | DevMatrix Studio</title>
   <link rel="stylesheet" href="css/dashboard.css">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
@@ -16,18 +16,42 @@
         <div class="nav-logo-badge">
           <i class='bx bx-git-repo-forked' style="font-size: 20px;"></i>
         </div>
-        <span>AppForge</span>
+        <span>DevMatrix</span>
       </a>
 
-      <!-- Multi-App Switcher Bar (APP-1, APP-2, Create New App, Rename) -->
-      <div class="app-switcher-bar">
-        <div class="app-pills-list" id="appPillsList">
-          <!-- Dynamically populated: APP-1, APP-2, etc. -->
-        </div>
-        <button class="btn-create-app" id="openCreateAppBtn" title="Create New App">
-          <i class='bx bx-plus'></i>
-          <span>Create New App</span>
+      <!-- Sleek Professional App Switcher Dropdown -->
+      <div class="app-dropdown-wrap">
+        <button class="app-dropdown-trigger" id="appDropdownTrigger" type="button">
+          <div class="app-trigger-left">
+            <span class="app-trigger-cube"><i class='bx bx-cube-alt'></i></span>
+            <div class="app-trigger-meta">
+              <span class="app-trigger-sub">Active App</span>
+              <strong class="app-trigger-name" id="dropdownActiveAppName">Loading...</strong>
+            </div>
+          </div>
+          <i class='bx bx-chevron-down app-trigger-arrow' id="appDropdownArrow"></i>
         </button>
+
+        <!-- Floating Glass Dropdown Menu -->
+        <div class="app-dropdown-menu" id="appDropdownMenu">
+          <div class="app-dropdown-header">
+            <span>SWITCH APPLICATION</span>
+            <span class="app-badge-count" id="appCountBadge">1 App</span>
+          </div>
+
+          <div class="app-dropdown-items" id="appDropdownItems">
+            <!-- Dynamically populated app items -->
+          </div>
+
+          <div class="app-dropdown-divider"></div>
+
+          <div class="app-dropdown-actions">
+            <button type="button" class="app-dropdown-btn-create" id="openCreateAppBtn">
+              <i class='bx bx-plus-circle'></i>
+              <span>Create New App</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -214,11 +238,11 @@
         <div class="whatsapp-credentials-grid">
           <div class="credential-box">
             <label>Webhook Listener Endpoint</label>
-            <code>https://my-app.appforge.io/api/webhook/whatsapp</code>
+            <code>https://my-app.devmatrix.io/api/webhook/whatsapp</code>
           </div>
           <div class="credential-box">
             <label>Verify Token (SHA256)</label>
-            <code>appforge_wa_verify_token_2026</code>
+            <code>devmatrix_wa_verify_token_2026</code>
           </div>
           <div class="credential-box">
             <label>API Handshake Status</label>
@@ -297,14 +321,14 @@
             <span class="dot-yellow"></span>
             <span class="dot-green"></span>
           </div>
-          <div class="terminal-title">bash - appforge-runner@production-node: ~</div>
+          <div class="terminal-title">bash - devmatrix-runner@production-node: ~</div>
           <div class="terminal-actions">
             <button class="terminal-btn" id="clearTerminalBtn">Clear</button>
             <button class="terminal-btn" id="copyLogsBtn">Copy Output</button>
           </div>
         </div>
         <div class="terminal-body" id="terminalOutput">
-          <div class="terminal-line green">[PIPELINE READY] AppForge CI/CD Engine initialized.</div>
+          <div class="terminal-line green">[PIPELINE READY] DevMatrix CI/CD Engine initialized.</div>
           <div class="terminal-line muted">[READY] MongoDB localhost:27017 active. Ready to trigger 8 pipeline stages.</div>
         </div>
       </div>

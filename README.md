@@ -1,7 +1,7 @@
-# AppForge Studio 🚀
-### End-to-End Assisted App Development, Multi-App Management, 8-Stage Green Pipeline & WhatsApp Cloud API
+# DevMatrix Studio 🚀
+### End-to-End Assisted App Development, Multi-App Management, 8-Stage Green Pipeline & Third-Party APIs
 
-AppForge Studio empowers founders, developers, and teams to build, test, and deploy production-grade software end-to-end without getting trapped in complex DevOps configurations.
+DevMatrix Studio empowers founders, developers, and teams to build, test, and deploy production-grade software end-to-end without getting trapped in complex DevOps configurations.
 
 ---
 
@@ -39,7 +39,7 @@ Every application follows this industry-standard 8-stage engineering pipeline:
 | **3** | **Automated Test Matrix** | Test Automation | 64 automated Vitest & Supertest unit tests, component mock servers, and integration regression tests (100% passing). | **GREEN ✓** |
 | **4** | **Static Code Quality & Sonar Gate** | Code Quality | SonarQube static analysis, ESLint standards, cyclomatic complexity auditing, and Grade A+ quality gate verification (0 code smells). | **GREEN ✓** |
 | **5** | **OWASP & Container Security Audit** | Security Compliance | OWASP Top 10 vulnerability inspection, automated secret scanning, and container CVE vulnerability audits via Trivy. | **GREEN ✓** |
-| **6** | **Database Provisioning & Migration** | Data Layer | Localhost MongoDB (`mongodb://127.0.0.1:27017/appforge_db`) setup, unique composite indexes, schema models, and daily backup policies. | **GREEN ✓** |
+| **6** | **Database Provisioning & Migration** | Data Layer | Localhost MongoDB (`mongodb://127.0.0.1:27017/devmatrix_db`) setup, unique composite indexes, schema models, and daily backup policies. | **GREEN ✓** |
 | **7** | **Cloud / On-Prem Deployment** | Deployment | Rolling zero-downtime blue/green deployment to **Cloud Provider (AWS ECS / GCP Cloud Run)** or **On-Premises (Docker Swarm / Kubernetes)**. | **GREEN ✓** |
 | **8** | **Zero-Trust Network & Live Production** | Production & Monitoring | Let's Encrypt TLS 1.3 auto-certificates, Helmet security headers, CORS origin whitelist, Cloudflare WAF, and 24/7 synthetic health checks (200 OK, 14ms). | **GREEN ✓** |
 
@@ -56,7 +56,7 @@ Every application follows this industry-standard 8-stage engineering pipeline:
 
 ## 🍃 Localhost MongoDB Database
 
-- **Connection URI**: `mongodb://127.0.0.1:27017/appforge_db`
+- **Connection URI**: `mongodb://127.0.0.1:27017/devmatrix_db`
 - **Native MongoDB Driver**: Uses native `mongodb` client with automatic reconnection
 - **Resilient Auto-Failover Store**: Includes an automatic file-backed JSON/BSON fallback (`data/db.json`) implementing the MongoDB Collection API so the platform can run immediately with zero friction even before `mongod` is started!
 
@@ -78,7 +78,7 @@ npm start
 
 #### Pre-Seeded Demo Account (contains APP-1 & APP-2):
 - **Username**: `demouser`
-- **Email**: `alex@appforge.io`
+- **Email**: `alex@devmatrix.io`
 - **Mobile**: `+15551234567`
 - **Password**: `Password123`
 

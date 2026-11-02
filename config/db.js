@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017';
-const DB_NAME = process.env.DB_NAME || 'appforge_db';
+const DB_NAME = process.env.DB_NAME || 'devmatrix_db';
 const LOCAL_DB_PATH = path.join(__dirname, '..', 'data', 'db.json');
 
 let client = null;

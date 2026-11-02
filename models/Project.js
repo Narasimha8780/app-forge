@@ -130,14 +130,14 @@ const DEFAULT_STAGES = [
     timestamp: new Date().toISOString(),
     config: {
       engine: 'MongoDB Localhost (27017)',
-      databaseName: 'appforge_db',
+      databaseName: 'devmatrix_db',
       collections: ['users', 'projects', 'contacts', 'logs'],
       indexes: 'Unique index on { username, email, mobile }',
       storageEngine: 'WiredTiger'
     },
     logs: [
       '[DATABASE] Connecting to MongoDB instance at mongodb://127.0.0.1:27017...',
-      '[DATABASE] Connected to database: appforge_db.',
+      '[DATABASE] Connected to database: devmatrix_db.',
       '[DATABASE] Ensuring collections: users, projects, contacts, logs.',
       '[DATABASE] Applied unique index on username, email, and mobile fields.',
       '[DATABASE] Storage engine verified: WiredTiger high-throughput engine.',
@@ -195,8 +195,8 @@ const DEFAULT_STAGES = [
 const DEFAULT_ENV_VARS = [
   { key: 'PORT', value: '5000', isSecret: false, description: 'Application server HTTP port' },
   { key: 'NODE_ENV', value: 'production', isSecret: false, description: 'Runtime mode' },
-  { key: 'MONGO_URI', value: 'mongodb://127.0.0.1:27017/appforge_db', isSecret: true, description: 'MongoDB localhost connection string' },
-  { key: 'JWT_SECRET', value: 'appforge_super_secret_jwt_key_2026', isSecret: true, description: 'Token signature secret' },
+  { key: 'MONGO_URI', value: 'mongodb://127.0.0.1:27017/devmatrix_db', isSecret: true, description: 'MongoDB localhost connection string' },
+  { key: 'JWT_SECRET', value: 'devmatrix_super_secret_jwt_key_2026', isSecret: true, description: 'Token signature secret' },
   { key: 'WHATSAPP_TOKEN', value: 'EAAO...whatsapp_meta_token', isSecret: true, description: 'WhatsApp Cloud API Access Token' },
   { key: 'WHATSAPP_PHONE_ID', value: '10984712093847', isSecret: false, description: 'WhatsApp Business Phone ID' },
   { key: 'STRIPE_SECRET_KEY', value: 'sk_live_51M...customKey', isSecret: true, description: 'Stripe payments secret' },
