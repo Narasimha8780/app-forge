@@ -184,16 +184,34 @@ function displayActiveAppDetails() {
 // Render Stepper Nodes with Green Completed Marks (8 Stages)
 function renderPipelineNodes(stages) {
   const stepper = document.getElementById('pipelineStepper');
+  if (!stepper) return;
   const nodes = stepper.querySelectorAll('.step-node');
+
+  const defaultIcons = {
+    1: 'bx-code-block',
+    2: 'bx-plug',
+    3: 'bx-test-tube',
+    4: 'bx-check-shield',
+    5: 'bx-shield-quarter',
+    6: 'bx-data',
+    7: 'bx-cloud-upload',
+    8: 'bx-badge-check'
+  };
 
   nodes.forEach(node => {
     const stepNum = Number(node.getAttribute('data-step'));
     const stageData = stages.find(s => s.step === stepNum);
+    const iconCircle = node.querySelector('.step-icon-circle');
 
     if (stageData && stageData.status === 'completed') {
       node.className = 'step-node completed';
-      const iconCircle = node.querySelector('.step-icon-circle');
-      iconCircle.innerHTML = `<i class='bx bx-check' style="font-size: 1.5rem; font-weight: 700;"></i>`;
+      if (iconCircle) iconCircle.innerHTML = `<i class='bx bx-check' style="font-size: 1.5rem; font-weight: 700;"></i>`;
+    } else if (stageData && stageData.status === 'running') {
+      node.className = 'step-node running active';
+      if (iconCircle) iconCircle.innerHTML = `<i class='bx bx-loader-alt bx-spin' style="font-size: 1.5rem;"></i>`;
+    } else {
+      node.className = 'step-node pending';
+      if (iconCircle) iconCircle.innerHTML = `<i class='bx ${defaultIcons[stepNum] || 'bx-circle'}'></i>`;
     }
   });
 
@@ -203,21 +221,33 @@ function renderPipelineNodes(stages) {
   if (progressLine) progressLine.style.width = `${pct}%`;
 
   const badgeText = document.getElementById('overallBadgeText');
+  const overallBadge = document.getElementById('overallBadge');
   if (badgeText) {
-    badgeText.textContent = completedCount === 8 
-      ? 'All 8 Stages Verified (GREEN ✓)' 
-      : `${completedCount}/8 Stages Completed`;
+    if (completedCount === 8) {
+      badgeText.textContent = 'All 8 Stages Verified (GREEN ✓)';
+      if (overallBadge) overallBadge.classList.add('verified');
+    } else if (completedCount === 0) {
+      badgeText.textContent = '0/8 Stages Run (Pipeline Ready)';
+      if (overallBadge) overallBadge.classList.remove('verified');
+    } else {
+      badgeText.textContent = `${completedCount}/8 Stages Completed`;
+      if (overallBadge) overallBadge.classList.remove('verified');
+    }
   }
 }
 
 // Render 8 Pipeline Stage Cards
 function renderStageCards(stages) {
   const container = document.getElementById('stagesGrid');
+  if (!container) return;
   container.innerHTML = '';
 
   stages.forEach(stage => {
+    const isCompleted = stage.status === 'completed';
+    const isRunning = stage.status === 'running';
+
     const card = document.createElement('div');
-    card.className = `stage-card ${stage.status === 'completed' ? 'active' : ''}`;
+    card.className = `stage-card ${isCompleted ? 'active' : ''}`;
     card.id = `stageCard_${stage.step}`;
 
     // Special controls for Step 7 (Cloud vs On-Prem)
@@ -236,12 +266,13 @@ function renderStageCards(stages) {
       `;
     }
 
-    // Special badge for Step 2 (Third-Party APIs) & Step 6 (MongoDB)
+    // Special badge for Step 2 (only if third-party APIs enabled) & Step 6 (MongoDB)
     let specialBadge = '';
-    if (stage.step === 2) {
+    const hasEnabledIntegrations = currentIntegrations && currentIntegrations.some(i => i.enabled);
+    if (stage.step === 2 && hasEnabledIntegrations) {
       specialBadge = `
         <div style="margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 106, 0, 0.15); border: 1px solid rgba(255, 106, 0, 0.4); color: #ff9900; padding: 4px 10px; border-radius: 12px; font-size: 0.76rem;">
-          <i class='bx bx-plug'></i> Third-Party APIs Pre-Configured
+          <i class='bx bx-plug'></i> Third-Party APIs Connected
         </div>
       `;
     } else if (stage.step === 6) {
@@ -252,10 +283,14 @@ function renderStageCards(stages) {
       `;
     }
 
+    const pillClass = isCompleted ? 'green' : (isRunning ? 'orange' : 'pending');
+    const pillIcon = isCompleted ? 'bx-check' : (isRunning ? 'bx-loader-alt bx-spin' : 'bx-time');
+    const pillText = isCompleted ? `Stage ${stage.step} (Verified ✓)` : (isRunning ? `Stage ${stage.step} (Running...)` : `Stage ${stage.step} (Ready)`);
+
     card.innerHTML = `
       <div class="stage-card-top">
-        <span class="stage-pill green">
-          <i class='bx bx-check'></i> Stage ${stage.step}
+        <span class="stage-pill ${pillClass}">
+          <i class='bx ${pillIcon}'></i> ${pillText}
         </span>
       </div>
       <div class="stage-title">
@@ -279,7 +314,7 @@ function renderStageCards(stages) {
 // Switch Deployment target (Cloud vs On-Prem)
 window.switchDeployTarget = async function(stepNum, type) {
   if (!currentProject) return;
-  const token = localStorage.getItem('appforge_token');
+  const token = localStorage.getItem('devmatrix_token') || localStorage.getItem('appforge_token');
 
   const providerName = type === 'on-prem' 
     ? 'On-Premises Docker Swarm / Kubernetes Cluster'
@@ -433,7 +468,7 @@ window.toggleIntegration = async function(idx, isChecked) {
   currentIntegrations[idx].status = isChecked ? 'Connected' : 'Disabled';
   renderIntegrations(currentIntegrations);
 
-  const token = localStorage.getItem('appforge_token');
+  const token = localStorage.getItem('devmatrix_token') || localStorage.getItem('appforge_token');
   if (currentProject && token) {
     try {
       await fetch(`/api/projects/${currentProject._id}/integrations`, {
@@ -626,7 +661,7 @@ function setupEventListeners(token) {
       { step: 3, name: 'Automated Test Matrix', logs: ['Running 64 Vitest & Supertest unit tests...', '64/64 test suites completed with 0 failures (1.18s)'] },
       { step: 4, name: 'Static Code Quality & Sonar', logs: ['SonarQube static analysis: Grade A+ achieved.', 'Coverage: 96.2% | Code smells: 0 | Maintainability: A'] },
       { step: 5, name: 'OWASP & Container Security', logs: ['OWASP Top 10 security audit: 100% Passed.', 'Trivy container layer scan: 0 CVE vulnerabilities found'] },
-      { step: 6, name: 'Database Provisioning', logs: ['Connecting to MongoDB localhost:27017...', 'appforge_db initialized with unique composite indexes!'] },
+      { step: 6, name: 'Database Provisioning', logs: ['Connecting to MongoDB localhost:27017...', 'devmatrix_db initialized with unique composite indexes!'] },
       { step: 7, name: 'Cloud / On-Prem Deployment', logs: ['Deploying rolling release...', '2/2 healthy container replicas serving traffic behind ALB'] },
       { step: 8, name: 'Zero-Trust Network & Live', logs: ['Provisioned TLS 1.3 encryption & Helmet headers.', 'Synthetic ping GET /api/health -> 200 OK (14ms latency)!'] }
     ];

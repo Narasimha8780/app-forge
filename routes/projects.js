@@ -1,5 +1,5 @@
 const express = require('express');
-const { Project, DEFAULT_STAGES } = require('../models/Project');
+const { Project, STAGES_BLUEPRINT, createCleanStages } = require('../models/Project');
 const { authMiddleware } = require('./auth');
 
 const router = express.Router();
@@ -113,7 +113,7 @@ router.post('/:id/pipeline/run', async (req, res) => {
       : (req.body.cloudProvider || project.cloudProvider || 'AWS ECS Fargate & Cloud Run');
 
     const timestamp = new Date().toISOString();
-    const updatedStages = (project.pipelineStages || DEFAULT_STAGES).map(stage => {
+    const updatedStages = (project.pipelineStages && project.pipelineStages.length > 0 ? project.pipelineStages : createCleanStages()).map(stage => {
       return {
         ...stage,
         status: 'completed',

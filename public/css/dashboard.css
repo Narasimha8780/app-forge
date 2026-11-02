@@ -705,6 +705,18 @@ body {
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
+.stage-pill.orange {
+  background: rgba(255, 106, 0, 0.18);
+  color: #ff9900;
+  border: 1px solid rgba(255, 106, 0, 0.4);
+}
+
+.stage-pill.pending {
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
 .stage-title {
   font-size: 1.05rem;
   font-weight: 700;
