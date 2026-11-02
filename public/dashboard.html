@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Pipeline Dashboard | AppForge Studio</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+
+  <!-- Top Dashboard Navbar -->
+  <header class="dash-nav">
+    <div class="nav-left">
+      <a href="/" class="nav-logo">
+        <div class="nav-logo-badge">
+          <i class='bx bx-git-repo-forked' style="font-size: 20px;"></i>
+        </div>
+        <span>AppForge</span>
+      </a>
+
+      <!-- Multi-App Switcher Bar (APP-1, APP-2, Create New App, Rename) -->
+      <div class="app-switcher-bar">
+        <div class="app-pills-list" id="appPillsList">
+          <!-- Dynamically populated: APP-1, APP-2, etc. -->
+        </div>
+        <button class="btn-create-app" id="openCreateAppBtn" title="Create New App">
+          <i class='bx bx-plus'></i>
+          <span>Create New App</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <!-- Localhost MongoDB Status Indicator -->
+      <div class="db-pill" id="dbStatusPill" title="Localhost MongoDB Connection State">
+        <span class="db-dot"></span>
+        <span id="dbStatusText">MongoDB: localhost:27017</span>
+      </div>
+
+      <div class="user-profile">
+        <div class="user-avatar" id="userAvatar">D</div>
+        <div>
+          <div class="user-name" id="userDisplayName">Developer</div>
+        </div>
+        <button class="btn-logout" id="logoutBtn" title="Sign Out">
+          <i class='bx bx-log-out'></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Container -->
+  <main class="dashboard-container">
+
+    <!-- Active App Header with Inline Rename & Delete -->
+    <section class="active-app-header">
+      <div class="active-app-meta">
+        <div class="app-title-row">
+          <h1 id="activeAppTitle">APP-1</h1>
+          <button class="btn-icon-action" id="openRenameAppBtn" title="Modify App Name">
+            <i class='bx bx-edit-alt'></i>
+            <span>Rename App</span>
+          </button>
+          <button class="btn-icon-action danger" id="deleteAppBtn" title="Delete this App">
+            <i class='bx bx-trash'></i>
+          </button>
+        </div>
+        <p id="activeAppDescription">End-to-end cloud & on-premises application with 8-stage pipeline, WhatsApp API, and MongoDB.</p>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-primary" id="runPipelineBtn">
+          <i class='bx bx-play-circle' style="font-size: 1.25rem;"></i>
+          <span>Run Complete 8-Stage Pipeline</span>
+        </button>
+        <button class="btn-secondary" id="openExportBtn">
+          <i class='bx bx-download'></i>
+          <span>Export Blueprint</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 8-STAGE PRODUCTION PIPELINE TRACK (GREEN MARK STEPPER) -->
+    <section class="pipeline-section">
+      <div class="section-header">
+        <h2>
+          <i class='bx bx-git-merge' style="color: #10b981;"></i>
+          <span>8-Stage Production DevOps & Infrastructure Pipeline</span>
+        </h2>
+        <div class="overall-badge" id="overallBadge">
+          <i class='bx bx-check-circle'></i>
+          <span id="overallBadgeText">All 8 Stages Verified (GREEN ✓)</span>
+        </div>
+      </div>
+
+      <!-- Stepper Nodes with Green Completed Marks -->
+      <div class="stepper-container" id="pipelineStepper">
+        <div class="stepper-track-line"></div>
+        <div class="stepper-track-progress" id="stepperProgressLine"></div>
+
+        <!-- Node 1: Architecture & Scaffolding -->
+        <div class="step-node completed active" data-step="1">
+          <div class="step-icon-circle"><i class='bx bx-code-block'></i></div>
+          <span class="step-number">Stage 1</span>
+          <span class="step-name">Scaffolding</span>
+        </div>
+
+        <!-- Node 2: Third-Party APIs Integration -->
+        <div class="step-node completed" data-step="2">
+          <div class="step-icon-circle"><i class='bx bx-plug'></i></div>
+          <span class="step-number">Stage 2</span>
+          <span class="step-name">Third-Party APIs</span>
+        </div>
+
+        <!-- Node 3: Automated Test Matrix -->
+        <div class="step-node completed" data-step="3">
+          <div class="step-icon-circle"><i class='bx bx-test-tube'></i></div>
+          <span class="step-number">Stage 3</span>
+          <span class="step-name">Test Matrix</span>
+        </div>
+
+        <!-- Node 4: Static Code Quality & Sonar -->
+        <div class="step-node completed" data-step="4">
+          <div class="step-icon-circle"><i class='bx bx-check-shield'></i></div>
+          <span class="step-number">Stage 4</span>
+          <span class="step-name">Sonar Gate</span>
+        </div>
+
+        <!-- Node 5: OWASP & Security Audit -->
+        <div class="step-node completed" data-step="5">
+          <div class="step-icon-circle"><i class='bx bx-shield-quarter'></i></div>
+          <span class="step-number">Stage 5</span>
+          <span class="step-name">Security Audit</span>
+        </div>
+
+        <!-- Node 6: Database Provisioning -->
+        <div class="step-node completed" data-step="6">
+          <div class="step-icon-circle"><i class='bx bx-data'></i></div>
+          <span class="step-number">Stage 6</span>
+          <span class="step-name">MongoDB Setup</span>
+        </div>
+
+        <!-- Node 7: Cloud / On-Prem Deployment -->
+        <div class="step-node completed" data-step="7">
+          <div class="step-icon-circle"><i class='bx bx-cloud-upload'></i></div>
+          <span class="step-number">Stage 7</span>
+          <span class="step-name">Deployment</span>
+        </div>
+
+        <!-- Node 8: Zero-Trust Network & Live -->
+        <div class="step-node completed" data-step="8">
+          <div class="step-icon-circle"><i class='bx bx-badge-check'></i></div>
+          <span class="step-number">Stage 8</span>
+          <span class="step-name">Live Production</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs-nav">
+      <button class="tab-btn active" data-tab="stagesTab">
+        <i class='bx bx-layer'></i>
+        <span>Pipeline Stages (8)</span>
+      </button>
+      <button class="tab-btn" data-tab="integrationsTab">
+        <i class='bx bxl-whatsapp'></i>
+        <span>WhatsApp API & Add-ons</span>
+      </button>
+      <button class="tab-btn" data-tab="envTab">
+        <i class='bx bx-slider-alt'></i>
+        <span>App Variables (.env Secrets)</span>
+      </button>
+      <button class="tab-btn" data-tab="terminalTab">
+        <i class='bx bx-terminal'></i>
+        <span>Live Terminal Stream</span>
+      </button>
+      <button class="tab-btn" data-tab="healthTab">
+        <i class='bx bx-pulse'></i>
+        <span>System & MongoDB Health</span>
+      </button>
+    </nav>
+
+    <!-- TAB 1: 8-STAGE PIPELINE CARDS -->
+    <div class="tab-content active" id="stagesTab">
+      <div class="stages-grid" id="stagesGrid">
+        <!-- Dynamically rendered with the 8 stages -->
+      </div>
+    </div>
+
+    <!-- TAB 2: WHATSAPP API & 3RD-PARTY ADD-ONS -->
+    <div class="tab-content" id="integrationsTab">
+      <!-- Special WhatsApp Test & Webhook Console -->
+      <div class="whatsapp-card-hub">
+        <div class="whatsapp-hub-header">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div class="whatsapp-large-icon">
+              <i class='bx bxl-whatsapp'></i>
+            </div>
+            <div>
+              <h3>WhatsApp Cloud API Management</h3>
+              <p style="color: var(--text-secondary); font-size: 0.88rem;">
+                Official Meta Graph API v20.0 integration for notifications, OTP authentication & customer conversations.
+              </p>
+            </div>
+          </div>
+          <button class="btn-primary" style="background: linear-gradient(135deg, #25d366, #128c7e); box-shadow: 0 0 15px rgba(37, 211, 102, 0.4);" id="openWhatsAppTestBtn">
+            <i class='bx bx-paper-plane'></i>
+            <span>Send Test WhatsApp Message</span>
+          </button>
+        </div>
+
+        <div class="whatsapp-credentials-grid">
+          <div class="credential-box">
+            <label>Webhook Listener Endpoint</label>
+            <code>https://my-app.appforge.io/api/webhook/whatsapp</code>
+          </div>
+          <div class="credential-box">
+            <label>Verify Token (SHA256)</label>
+            <code>appforge_wa_verify_token_2026</code>
+          </div>
+          <div class="credential-box">
+            <label>API Handshake Status</label>
+            <span style="color: #34d399; font-weight: 700; font-size: 0.88rem;"><i class='bx bx-check-circle'></i> 200 OK (Verified)</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin: 28px 0 16px;">
+        <h3>Third-Party API Integrations Hub</h3>
+        <p style="color: var(--text-secondary); font-size: 0.88rem;">
+          Connect production APIs with one click. Pre-wired with authentication and webhooks.
+        </p>
+      </div>
+      <div class="integrations-grid" id="integrationsGrid">
+        <!-- Dynamically populated with WhatsApp, Stripe, OpenAI, Twilio, GitHub, SendGrid, Redis, S3, Auth0 -->
+      </div>
+    </div>
+
+    <!-- TAB 3: ENVIRONMENT VARIABLES (APP VARIABLES) -->
+    <div class="tab-content" id="envTab">
+      <div class="env-card">
+        <div class="env-header">
+          <div>
+            <h3>Environment Variables & App Secrets</h3>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 4px;">
+              Manage encrypted application runtime configurations, WhatsApp tokens, and MongoDB credentials.
+            </p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-secondary" id="addEnvBtn">
+              <i class='bx bx-plus'></i>
+              <span>Add Variable</span>
+            </button>
+            <button class="btn-primary" id="saveEnvBtn">
+              <i class='bx bx-save'></i>
+              <span>Save & Apply</span>
+            </button>
+          </div>
+        </div>
+
+        <table class="env-table">
+          <thead>
+            <tr>
+              <th>Variable Key</th>
+              <th>Value</th>
+              <th>Description</th>
+              <th>Visibility</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="envTableBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+          <button class="btn-secondary" id="copyEnvBtn">
+            <i class='bx bx-copy'></i>
+            <span>Copy as .env</span>
+          </button>
+          <button class="btn-secondary" id="downloadEnvBtn">
+            <i class='bx bx-download'></i>
+            <span>Download .env.production</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: LIVE TERMINAL & EXECUTION LOGS -->
+    <div class="tab-content" id="terminalTab">
+      <div class="terminal-card">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="dot-red"></span>
+            <span class="dot-yellow"></span>
+            <span class="dot-green"></span>
+          </div>
+          <div class="terminal-title">bash - appforge-runner@production-node: ~</div>
+          <div class="terminal-actions">
+            <button class="terminal-btn" id="clearTerminalBtn">Clear</button>
+            <button class="terminal-btn" id="copyLogsBtn">Copy Output</button>
+          </div>
+        </div>
+        <div class="terminal-body" id="terminalOutput">
+          <div class="terminal-line green">[PIPELINE READY] AppForge CI/CD Engine initialized.</div>
+          <div class="terminal-line muted">[READY] MongoDB localhost:27017 active. Ready to trigger 8 pipeline stages.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: SYSTEM & MONGODB HEALTH -->
+    <div class="tab-content" id="healthTab">
+      <div class="env-card">
+        <h3>System & Localhost MongoDB Health Telemetry</h3>
+        <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 6px 0 20px;">
+          Real-time metrics monitored directly from your local Node.js environment and MongoDB daemon.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;" id="telemetryCards">
+          <div style="background: var(--bg-card); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Database URI</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #10b981; margin-top: 6px;" id="healthDbUri">localhost:27017</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">MongoDB Native Client</div>
+          </div>
+          <div style="background: var(--bg-card); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Server Uptime</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-top: 6px;" id="healthUptime">--</div>
+            <div style="font-size: 0.8rem; color: #34d399; margin-top: 4px;">Zero Downtime Active</div>
+          </div>
+          <div style="background: var(--bg-card); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Memory RSS</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #ff9900; margin-top: 6px;" id="healthMemory">-- MB</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Lightweight footprint</div>
+          </div>
+          <div style="background: var(--bg-card); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div style="color: var(--text-muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Pipeline Health</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #10b981; margin-top: 6px;">100% Operational</div>
+            <div style="font-size: 0.8rem; color: #34d399; margin-top: 4px;">All 8 stages ready</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: Create New App (APP-1, APP-2, etc.) -->
+  <div class="modal-overlay" id="createAppModal">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3>Create New Application</h3>
+        <button class="modal-close" id="closeCreateAppModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="createAppForm">
+          <div class="form-field" style="margin-bottom: 16px;">
+            <label style="color: #fff; font-size: 0.88rem; font-weight: 600; margin-bottom: 6px; display: block;">App Name *</label>
+            <input type="text" id="newAppNameInput" placeholder="e.g. APP-2 or My Storefront API" required style="width: 100%; padding: 12px; background: #0c0d12; border: 1px solid rgba(255, 106, 0, 0.4); border-radius: 10px; color: #fff; outline: none;">
+          </div>
+          <div class="form-field" style="margin-bottom: 20px;">
+            <label style="color: #fff; font-size: 0.88rem; font-weight: 600; margin-bottom: 6px; display: block;">Framework Stack</label>
+            <select id="newAppFrameworkSelect" style="width: 100%; padding: 12px; background: #0c0d12; border: 1px solid var(--border-color); border-radius: 10px; color: #fff; outline: none;">
+              <option value="React 19 + Express REST API">React 19 + Node.js Express API</option>
+              <option value="Next.js 15 Fullstack">Next.js 15 Fullstack (SSR + API)</option>
+              <option value="Python FastAPI + Vue 3">Python FastAPI + Vue 3</option>
+              <option value="Mobile App (Flutter + Node API)">Mobile App (Flutter + Node API)</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px;">
+            <span>Initialize App & 8-Stage Pipeline</span>
+            <i class='bx bx-rocket'></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Rename App (Modify Name) -->
+  <div class="modal-overlay" id="renameAppModal">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3>Modify App Name</h3>
+        <button class="modal-close" id="closeRenameAppModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="renameAppForm">
+          <div class="form-field" style="margin-bottom: 20px;">
+            <label style="color: #fff; font-size: 0.88rem; font-weight: 600; margin-bottom: 6px; display: block;">New App Name *</label>
+            <input type="text" id="renameAppNameInput" required style="width: 100%; padding: 12px; background: #0c0d12; border: 1px solid rgba(255, 106, 0, 0.4); border-radius: 10px; color: #fff; outline: none;">
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px;">
+            <span>Save App Name</span>
+            <i class='bx bx-check'></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Test WhatsApp Message Dispatch -->
+  <div class="modal-overlay" id="whatsAppTestModal">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 8px;">
+          <i class='bx bxl-whatsapp' style="color: #25d366;"></i>
+          <span>Send Test WhatsApp Message</span>
+        </h3>
+        <button class="modal-close" id="closeWhatsAppTestModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="whatsAppTestForm">
+          <div class="form-field" style="margin-bottom: 14px;">
+            <label style="color: #fff; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; display: block;">Recipient Phone Number *</label>
+            <input type="tel" id="waRecipientInput" placeholder="+1 (555) 000-0000" required style="width: 100%; padding: 12px; background: #0c0d12; border: 1px solid var(--border-color); border-radius: 10px; color: #fff; outline: none;">
+          </div>
+          <div class="form-field" style="margin-bottom: 20px;">
+            <label style="color: #fff; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; display: block;">Message Template</label>
+            <select id="waTemplateSelect" style="width: 100%; padding: 12px; background: #0c0d12; border: 1px solid var(--border-color); border-radius: 10px; color: #fff; outline: none;">
+              <option value="otp">Two-Factor OTP Verification Code</option>
+              <option value="deploy_success">Pipeline Deployment Status: GREEN</option>
+              <option value="custom">Custom Developer Notification</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary" style="background: linear-gradient(135deg, #25d366, #128c7e); width: 100%; justify-content: center; padding: 12px;">
+            <span>Dispatch via WhatsApp Cloud API</span>
+            <i class='bx bx-send'></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Export Blueprint (Dockerfile, Docker Compose, CI/CD Actions) -->
+  <div class="modal-overlay" id="exportModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>App Deployment Blueprint & Config Files</h3>
+        <button class="modal-close" id="closeExportModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 12px;">
+          Production-ready containerization and CI/CD automation manifests tailored to your 8-stage configuration:
+        </p>
+
+        <div style="margin-bottom: 16px;">
+          <strong>Dockerfile (Multi-Stage Production Build):</strong>
+          <pre class="code-block" id="modalDockerfile">Loading Dockerfile...</pre>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <strong>docker-compose.yml (App + Localhost MongoDB Container):</strong>
+          <pre class="code-block" id="modalDockerCompose">Loading docker-compose...</pre>
+        </div>
+
+        <div>
+          <strong>.github/workflows/deploy.yml (Automated 8-Stage Pipeline):</strong>
+          <pre class="code-block" id="modalGithub">Loading GitHub Actions workflow...</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Stack -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

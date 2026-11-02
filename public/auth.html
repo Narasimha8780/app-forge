@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In & Register | AppForge Studio</title>
+  <link rel="stylesheet" href="css/auth.css">
+  <!-- Boxicons for sleek SVG icons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="auth-header">
+    <a href="/" class="logo">
+      <div class="logo-icon">
+        <i class='bx bx-git-repo-forked' style="font-size: 20px;"></i>
+      </div>
+      <span>AppForge</span>
+    </a>
+    <a href="/" class="back-btn">
+      <i class='bx bx-left-arrow-alt'></i>
+      <span>Back to Home</span>
+    </a>
+  </header>
+
+  <!-- Animated Sliding Container (Video 1 Reference) -->
+  <div class="container" id="authContainer">
+
+    <!-- LOGIN FORM (Left on default) -->
+    <div class="form-box login">
+      <form id="loginForm">
+        <h2>Login</h2>
+        <p class="subtitle">Access your 7-stage app deployment dashboard</p>
+
+        <div class="form-alert" id="loginAlert"></div>
+
+        <div class="input-group">
+          <input type="text" id="loginIdentifier" placeholder="Username, Email or Mobile" required autocomplete="username">
+          <i class='bx bxs-user icon'></i>
+        </div>
+
+        <div class="input-group">
+          <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+          <i class='bx bxs-lock-alt icon'></i>
+        </div>
+
+        <button type="submit" class="btn" id="loginSubmitBtn">
+          <span>Login</span>
+          <i class='bx bx-right-arrow-alt'></i>
+        </button>
+
+        <div class="switch-text">
+          <p>Don't have an account? <a href="#" id="toSignupLink">Sign Up</a></p>
+        </div>
+      </form>
+    </div>
+
+    <!-- REGISTER FORM (Right on default, slides into view) -->
+    <div class="form-box register">
+      <form id="registerForm">
+        <h2>Register</h2>
+        <p class="subtitle">Build, test & deploy apps end-to-end</p>
+
+        <div class="form-alert" id="registerAlert"></div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <input type="text" id="regFirstName" placeholder="First Name" required>
+            <i class='bx bx-id-card icon'></i>
+          </div>
+          <div class="input-group">
+            <input type="text" id="regLastName" placeholder="Last Name" required>
+            <i class='bx bx-user icon'></i>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <input type="text" id="regUsername" placeholder="Unique Username" required autocomplete="username">
+          <i class='bx bx-at icon'></i>
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <input type="email" id="regEmail" placeholder="Email ID" required autocomplete="email">
+            <i class='bx bxs-envelope icon'></i>
+          </div>
+          <div class="input-group">
+            <input type="tel" id="regMobile" placeholder="Mobile Number" required autocomplete="tel">
+            <i class='bx bxs-phone icon'></i>
+          </div>
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <input type="password" id="regPassword" placeholder="Password" required autocomplete="new-password">
+            <i class='bx bxs-lock-alt icon'></i>
+          </div>
+          <div class="input-group">
+            <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required autocomplete="new-password">
+            <i class='bx bx-check-shield icon'></i>
+          </div>
+        </div>
+
+        <button type="submit" class="btn" id="registerSubmitBtn">
+          <span>Create Account</span>
+          <i class='bx bx-user-plus'></i>
+        </button>
+
+        <div class="switch-text">
+          <p>Already have an account? <a href="#" id="toSigninLink">Sign In</a></p>
+        </div>
+      </form>
+    </div>
+
+    <!-- SLIDING DECORATIVE PANELS & DIAGONAL SPLIT (Video 1 Reference) -->
+    <div class="toggle-box">
+      <!-- Diagonal Glowing Shape -->
+      <div class="curved-shape"></div>
+
+      <!-- Left Panel (Shows when Registering) -->
+      <div class="toggle-panel toggle-left">
+        <h1>WELCOME!</h1>
+        <p>We're delighted to have you here. If you need any assistance, feel free to reach out.</p>
+        <div class="badge-pills">
+          <div class="badge-pill">
+            <span class="icon-check">✓</span>
+            <span>7-Step Guided Pipeline (App Build to Live)</span>
+          </div>
+          <div class="badge-pill">
+            <span class="icon-check">✓</span>
+            <span>Localhost MongoDB Database Ready</span>
+          </div>
+          <div class="badge-pill">
+            <span class="icon-check">✓</span>
+            <span>Cloud (AWS/GCP) & On-Premises Deployments</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel (Shows when Logging In) -->
+      <div class="toggle-panel toggle-right">
+        <h1>WELCOME BACK!</h1>
+        <p>We are happy to have you with us again. If you need anything, we are here to help.</p>
+        <div class="badge-pills">
+          <div class="badge-pill">
+            <span class="icon-check">✓</span>
+            <span>Automated Testing & Code Quality Audits</span>
+          </div>
+          <div class="badge-pill">
+            <span class="icon-check">✓</span>
+            <span>Third-Party APIs & Secret Variables Manager</span>
+          </div>
+          <div class="badge-pill">
+            <span class="icon-check">✓</span>
+            <span>Live Real-Time Terminal Execution</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>
+

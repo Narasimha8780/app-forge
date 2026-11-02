@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AppForge | Build, Test & Deploy Production Apps End-to-End</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Menu (Dark Glass with Neon Orange Highlights) -->
+  <header class="navbar">
+    <a href="/" class="nav-brand">
+      <div class="brand-icon">
+        <i class='bx bx-git-repo-forked'></i>
+      </div>
+      <span>AppForge</span>
+    </a>
+
+    <!-- Menu Links: Home, Services, Pipeline, Add-ons, Contact Us -->
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#pipeline">8-Stage Pipeline</a></li>
+      <li><a href="#whatsapp">WhatsApp & Add-ons</a></li>
+      <li><a href="#contact">Contact Us</a></li>
+    </ul>
+
+    <!-- Sign In / Sign Up CTA -->
+    <div class="nav-actions" id="navAuthActions">
+      <a href="/auth#login" class="btn-pill-outline" id="navSignInBtn">Sign In</a>
+      <a href="/auth#signup" class="btn-pill-primary" id="navSignUpBtn">
+        <span>Get Started</span>
+        <i class='bx bx-right-arrow-alt'></i>
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO SECTION (Dark Neon Orange Glow Theme) -->
+  <section class="hero-section" id="home">
+    <div class="hero-text-content">
+      <div class="hero-tag">
+        <i class='bx bxs-zap' style="color: #ff9900;"></i>
+        <span>End-to-End Assisted App Engineering & CI/CD</span>
+      </div>
+
+      <h1 class="hero-title">
+        Build, Test & Deploy Apps <br>
+        <span class="glow-orange">Without DevOps</span> Headaches.
+      </h1>
+
+      <p class="hero-desc">
+        Don’t know how to develop and setup an application end-to-end? AppForge automates every step: 
+        from scaffolding code to automated tests, code quality audits, cloud or on-prem deployment, 
+        localhost MongoDB database provisioning, and WhatsApp Cloud API integration.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="/auth#signup" class="btn-pill-primary" style="padding: 14px 34px; font-size: 1.05rem;">
+          <span>Launch Your First App</span>
+          <i class='bx bx-rocket'></i>
+        </a>
+        <a href="#pipeline" class="btn-pill-outline" style="padding: 14px 28px; font-size: 1rem;">
+          <span>Explore 8 Stages</span>
+          <i class='bx bx-down-arrow-alt'></i>
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <h4>18,400+</h4>
+          <p>Apps Deployed</p>
+        </div>
+        <div class="stat-item">
+          <h4>99.98%</h4>
+          <p>Pipeline Success</p>
+        </div>
+        <div class="stat-item">
+          <h4>8 Stages</h4>
+          <p>Green Mark Verified</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive Simulator Sandbox (Video 1 Style Glowing Dark Card) -->
+    <div class="hero-interactive-card">
+      <div class="card-pill-toggle">
+        <button class="toggle-choice-btn active" id="heroCloudBtn" onclick="switchHeroTarget('cloud')">
+          <i class='bx bxl-aws'></i>
+          <span>Cloud Provider (AWS/GCP)</span>
+        </button>
+        <button class="toggle-choice-btn" id="heroOnPremBtn" onclick="switchHeroTarget('on-prem')">
+          <i class='bx bxl-docker'></i>
+          <span>On-Premises (Docker/K8s)</span>
+        </button>
+      </div>
+
+      <div class="preview-diagram">
+        <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 14px; color: #fff;" id="heroTargetTitle">
+          Target: AWS ECS Fargate & Cloud Run
+        </div>
+
+        <div class="preview-row">
+          <span>1. Architecture & Scaffolding</span>
+          <span class="green-badge"><i class='bx bx-check-circle'></i> Containerized</span>
+        </div>
+        <div class="preview-row">
+          <span>2. Third-Party APIs Integration</span>
+          <span class="green-badge"><i class='bx bx-check-circle'></i> Webhooks Active</span>
+        </div>
+        <div class="preview-row">
+          <span>3. Automated Test Matrix (64 Tests)</span>
+          <span class="green-badge"><i class='bx bx-check-circle'></i> 100% Passed</span>
+        </div>
+        <div class="preview-row">
+          <span>4. Static Code Quality & Sonar Gate</span>
+          <span class="green-badge"><i class='bx bx-check-circle'></i> Grade A+ (0 Smells)</span>
+        </div>
+        <div class="preview-row">
+          <span>5. OWASP & Container Security Audit</span>
+          <span class="green-badge"><i class='bx bx-check-circle'></i> 0 Vulnerabilities</span>
+        </div>
+        <div class="preview-row">
+          <span>6. Database Setup (MongoDB Localhost)</span>
+          <span class="green-badge"><i class='bx bx-check-circle'></i> Connected (27017)</span>
+        </div>
+        <div class="preview-row">
+          <span>7. Zero-Downtime Deployment</span>
+          <span class="green-badge" id="heroTargetPill"><i class='bx bx-check-circle'></i> Rolling Rollout</span>
+        </div>
+        <div class="preview-row">
+          <span>8. Zero-Trust Network & Live Monitoring</span>
+          <span class="green-badge"><i class='bx bx-check-circle'></i> 200 OK (14ms)</span>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.85rem; color: var(--text-muted);">
+          <i class='bx bx-time-five'></i> Average Setup Time: <strong>2.8 minutes</strong>
+        </span>
+        <a href="/auth#signup" class="btn-pill-primary" style="padding: 8px 18px; font-size: 0.88rem;">
+          <span>Test Live Pipeline</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVAMPED SECTION: EVERYTHING YOU NEED TO BUILD & SETUP YOUR APP -->
+  <section class="services-section" id="services">
+    <div class="section-head">
+      <div class="badge-pill">
+        <i class='bx bx-layer'></i>
+        <span>Complete Fullstack Engineering Blueprint</span>
+      </div>
+      <h2>Everything You Need To Build & Setup Your App</h2>
+      <p>From initial code boilerplate to production cloud clusters. We eliminate all technical barriers so founders, developers, and businesses can launch production-ready web apps without hiring DevOps engineers.</p>
+    </div>
+
+    <div class="services-grid">
+      <!-- Service 1: Architecture & Scaffolding -->
+      <div class="service-card">
+        <div>
+          <div class="service-icon-wrap">
+            <i class='bx bx-code-alt'></i>
+          </div>
+          <h3>1. Modern Framework Scaffolding</h3>
+          <p>Production-ready architectural scaffolds for React 19, Next.js 15, Vue 3, Express, or Python FastAPI with optimized directory structures.</p>
+        </div>
+        <ul class="service-feature-list">
+          <li><i class='bx bx-check'></i> Clean modular Monorepo layout</li>
+          <li><i class='bx bx-check'></i> Multi-stage Alpine Dockerfile</li>
+          <li><i class='bx bx-check'></i> TypeScript & ESNext compilation</li>
+        </ul>
+      </div>
+
+      <!-- Service 2: Automated Test Matrix -->
+      <div class="service-card">
+        <div>
+          <div class="service-icon-wrap">
+            <i class='bx bx-vial'></i>
+          </div>
+          <h3>2. Automated Testing Suite</h3>
+          <p>Prevent production breakages with pre-wired unit tests, integration contracts, mock servers, and Playwright assertion runners.</p>
+        </div>
+        <ul class="service-feature-list">
+          <li><i class='bx bx-check'></i> Vitest, Jest & Supertest pre-wired</li>
+          <li><i class='bx bx-check'></i> End-to-End API contract testing</li>
+          <li><i class='bx bx-check'></i> Real-time assertion pass/fail logs</li>
+        </ul>
+      </div>
+
+      <!-- Service 3: SonarQube & Security Audit -->
+      <div class="service-card">
+        <div>
+          <div class="service-icon-wrap">
+            <i class='bx bx-shield-quarter'></i>
+          </div>
+          <h3>3. Code Quality & OWASP Audit</h3>
+          <p>Enforce strict enterprise code quality gates with automated SonarQube analysis, ESLint standards, and CVE dependency audits.</p>
+        </div>
+        <ul class="service-feature-list">
+          <li><i class='bx bx-check'></i> SonarQube Grade A+ Quality Gate</li>
+          <li><i class='bx bx-check'></i> 0 Vulnerabilities & 0 Code Smells</li>
+          <li><i class='bx bx-check'></i> Automated secret & credential leak scan</li>
+        </ul>
+      </div>
+
+      <!-- Service 4: Multi-Cloud & On-Premises -->
+      <div class="service-card">
+        <div>
+          <div class="service-icon-wrap">
+            <i class='bx bx-cloud'></i>
+          </div>
+          <h3>4. Cloud & On-Premises Deployment</h3>
+          <p>Orchestrate container workloads to major cloud providers (AWS ECS, Google Cloud Run, Azure) or deploy to bare-metal On-Premises servers.</p>
+        </div>
+        <ul class="service-feature-list">
+          <li><i class='bx bx-check'></i> AWS ECS Fargate & GCP Cloud Run</li>
+          <li><i class='bx bx-check'></i> On-Premises Docker Swarm & K8s</li>
+          <li><i class='bx bx-check'></i> Zero-downtime blue/green rolling rollout</li>
+        </ul>
+      </div>
+
+      <!-- Service 5: Database Orchestration -->
+      <div class="service-card">
+        <div>
+          <div class="service-icon-wrap">
+            <i class='bx bx-data'></i>
+          </div>
+          <h3>5. Localhost MongoDB & Clusters</h3>
+          <p>Automated database setup for Localhost MongoDB (27017) or Atlas replica sets with collection schemas, unique indexes, and daily backups.</p>
+        </div>
+        <ul class="service-feature-list">
+          <li><i class='bx bx-check'></i> Localhost MongoDB: 27017 active</li>
+          <li><i class='bx bx-check'></i> Unique composite indexes applied</li>
+          <li><i class='bx bx-check'></i> Resilient auto-failover persistence</li>
+        </ul>
+      </div>
+
+      <!-- Service 6: Zero-Trust Security & Network -->
+      <div class="service-card">
+        <div>
+          <div class="service-icon-wrap">
+            <i class='bx bx-lock-open-alt'></i>
+          </div>
+          <h3>6. Zero-Trust Network & TLS 1.3</h3>
+          <p>Automatic Let's Encrypt SSL/TLS certificates, CORS whitelist policies, Helmet headers, and Cloudflare WAF anti-DDoS protection.</p>
+        </div>
+        <ul class="service-feature-list">
+          <li><i class='bx bx-check'></i> Automated TLS 1.3 SSL auto-cert</li>
+          <li><i class='bx bx-check'></i> WAF rate-limiting (100 req/min)</li>
+          <li><i class='bx bx-check'></i> Encrypted environment secrets (.env)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVAMPED SECTION: 8-STAGE PRODUCTION LIFECYCLE PIPELINE -->
+  <section class="pipeline-showcase" id="pipeline">
+    <div style="max-width: 1340px; margin: 0 auto;">
+      <div class="section-head">
+        <div class="badge-pill">
+          <i class='bx bx-git-merge'></i>
+          <span>Industry-Standard DevOps Pipeline</span>
+        </div>
+        <h2>The 8-Stage Production Lifecycle Pipeline</h2>
+        <p>Every application in your dashboard follows this 8-stage verification pipeline with real-time green checkmarks and live execution terminal logs.</p>
+      </div>
+
+      <div class="pipeline-cards-row">
+        <!-- Stage 1 -->
+        <div class="pipe-card">
+          <span class="pipe-step-badge"><i class='bx bx-check'></i> Stage 1</span>
+          <h4>1. Architecture & Scaffolding</h4>
+          <p>Select stack (React, Next.js, Express), resolve dependencies, compile assets, and build multi-stage Alpine Docker container.</p>
+        </div>
+
+        <!-- Stage 2 -->
+        <div class="pipe-card">
+          <span class="pipe-step-badge"><i class='bx bx-check'></i> Stage 2</span>
+          <h4>2. Third-Party APIs Integration</h4>
+          <p>Pre-wire third-party developer APIs including Stripe payment webhooks, OpenAI agent connectors, Twilio SMS, and messaging integrations.</p>
+        </div>
+
+        <!-- Stage 3 -->
+        <div class="pipe-card">
+          <span class="pipe-step-badge"><i class='bx bx-check'></i> Stage 3</span>
+          <h4>3. Automated Test Matrix</h4>
+          <p>Execute 64 automated unit tests, component suites, database mock fixtures, and integration regression tests.</p>
+        </div>
+
+        <!-- Stage 4 -->
+        <div class="pipe-card">
+          <span class="pipe-step-badge"><i class='bx bx-check'></i> Stage 4</span>
+          <h4>4. Static Code Quality & Sonar</h4>
+          <p>SonarQube static analysis, ESLint standards, cyclomatic complexity check, and Grade A+ quality gate verification.</p>
+        </div>
+
+        <!-- Stage 5 -->
+        <div class="pipe-card">
+          <span class="pipe-step-badge"><i class='bx bx-check'></i> Stage 5</span>
+          <h4>5. OWASP & Container Audit</h4>
+          <p>Inspect code for secret leaks, audit npm tree for CVE vulnerabilities, and scan container layers with Trivy.</p>
+        </div>
+
+        <!-- Stage 6 -->
+        <div class="pipe-card">
+          <span class="pipe-step-badge"><i class='bx bx-check'></i> Stage 6</span>
+          <h4>6. Database Provisioning</h4>
+          <p>Provision localhost MongoDB (27017) or Atlas replica set, create unique collections, schemas, and indexing.</p>
+        </div>
+
+        <!-- Stage 7 -->
+        <div class="pipe-card">
+          <span class="pipe-step-badge"><i class='bx bx-check'></i> Stage 7</span>
+          <h4>7. Cloud / On-Prem Deployment</h4>
+          <p>Deploy containers to AWS ECS / Cloud Run or On-Premises Docker Swarm / Kubernetes with rolling blue/green strategy.</p>
+        </div>
+
+        <!-- Stage 8 -->
+        <div class="pipe-card">
+          <span class="pipe-step-badge"><i class='bx bx-check'></i> Stage 8</span>
+          <h4>8. Zero-Trust Network & Live</h4>
+          <p>Provision Let's Encrypt TLS 1.3, configure CORS & WAF rate-limiting, and run synthetic health checks (200 OK).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHATSAPP API & BEST ADD-ONS SHOWCASE BANNER -->
+  <section class="services-section" id="whatsapp" style="padding-top: 60px;">
+    <div class="whatsapp-banner">
+      <div class="whatsapp-content">
+        <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(37, 211, 102, 0.15); border: 1px solid rgba(37, 211, 102, 0.4); color: #25d366; padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; margin-bottom: 16px;">
+          <i class='bx bxl-whatsapp' style="font-size: 1.2rem;"></i>
+          <span>Official WhatsApp Cloud API Pre-Integrated</span>
+        </div>
+        <h3>
+          <i class='bx bxl-whatsapp' style="color: #25d366;"></i>
+          Instant WhatsApp API Integration
+        </h3>
+        <p style="color: #d1d5db; font-size: 1rem; line-height: 1.65; margin-bottom: 24px;">
+          Connect your application to over 2 Billion users. Pre-configured with official Meta WhatsApp Cloud API webhooks, two-factor OTP verification, automated order confirmations, and AI-powered customer support chatbots.
+        </p>
+
+        <ul class="service-feature-list" style="margin-bottom: 24px;">
+          <li><i class='bx bx-check' style="color: #25d366;"></i> Two-Factor Authentication & OTP message dispatch</li>
+          <li><i class='bx bx-check' style="color: #25d366;"></i> Real-time customer chat webhooks at <code>/api/webhook/whatsapp</code></li>
+          <li><i class='bx bx-check' style="color: #25d366;"></i> Template message approval & Meta Graph API handshake</li>
+        </ul>
+
+        <a href="/auth#signup" class="btn-pill-primary" style="background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); box-shadow: 0 0 25px rgba(37, 211, 102, 0.4); width: fit-content;">
+          <span>Enable WhatsApp in Your App</span>
+          <i class='bx bx-right-arrow-alt'></i>
+        </a>
+      </div>
+
+      <!-- Live Chat Simulator -->
+      <div class="whatsapp-chat-preview">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.15); padding-bottom: 12px;">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: #25d366; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.4rem;">
+            <i class='bx bxl-whatsapp'></i>
+          </div>
+          <div>
+            <div style="color: #fff; font-weight: 700; font-size: 0.95rem;">AppForge Live Bot</div>
+            <div style="color: #a7f3d0; font-size: 0.75rem;">Verified Business API</div>
+          </div>
+        </div>
+
+        <div class="chat-bubble">
+          <strong>🔐 Verification Code:</strong><br>
+          Your AppForge verification code is <strong>849-201</strong>. It expires in 5 minutes.
+        </div>
+
+        <div class="chat-bubble" style="background: #ffffff;">
+          <strong>🚀 Deployment Success:</strong><br>
+          App <strong>APP-1</strong> has been successfully deployed to production via AWS ECS. Status: <strong>100% GREEN ✓</strong>
+        </div>
+
+        <div style="text-align: right; color: rgba(255, 255, 255, 0.7); font-size: 0.75rem; margin-top: 6px;">
+          Delivered via Meta Cloud API v20.0
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADD-ONS & SECRETS MANAGER SECTION -->
+  <section class="services-section">
+    <div class="section-head">
+      <div class="badge-pill">
+        <i class='bx bx-plug'></i>
+        <span>Developer Connectors & Add-ons</span>
+      </div>
+      <h2>Best Developer Add-ons & Secret Variables Manager</h2>
+      <p>Connect production third-party APIs with a single click. Pre-wired with authentication and webhooks.</p>
+    </div>
+
+    <div class="services-grid" style="grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));">
+      <div class="service-card">
+        <div class="service-icon-wrap"><i class='bx bxl-stripe'></i></div>
+        <h3>Stripe Payments</h3>
+        <p>Instant checkout sessions, customer billing portals, and recurring subscription webhooks.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon-wrap"><i class='bx bx-bot'></i></div>
+        <h3>OpenAI GPT-4o API</h3>
+        <p>Pre-configured AI agent integration for intelligent embeddings, chat completions, and automated workflows.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon-wrap"><i class='bx bxl-whatsapp' style="color: #25d366;"></i></div>
+        <h3>WhatsApp Cloud API</h3>
+        <p>Official Meta WhatsApp API for real-time customer conversations, OTP dispatch, and automated alerts.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon-wrap"><i class='bx bxl-github'></i></div>
+        <h3>GitHub CI/CD Actions</h3>
+        <p>Auto-triggers the 8-stage pipeline on every push or pull-request with branch deployment previews.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT US SECTION (Saved directly into MongoDB) -->
+  <section class="contact-section" id="contact">
+    <div class="contact-card-box">
+      <div class="contact-sidebar">
+        <h3>Need Help Setting Up Your App?</h3>
+        <p>Our senior DevOps and cloud architects are ready to guide you through every line of code, database query, and cloud deployment.</p>
+
+        <ul class="contact-perks">
+          <li><i class='bx bx-check-circle'></i> 1-on-1 Fullstack Architecture Review</li>
+          <li><i class='bx bx-check-circle'></i> WhatsApp API Webhook Setup Assistance</li>
+          <li><i class='bx bx-check-circle'></i> Cloud (AWS/GCP) & On-Premises Migration</li>
+          <li><i class='bx bx-check-circle'></i> Localhost MongoDB Configuration Support</li>
+          <li><i class='bx bx-check-circle'></i> 24-Hour Response Guaranteed</li>
+        </ul>
+      </div>
+
+      <div class="contact-form-wrap">
+        <form id="contactForm" class="contact-form">
+          <div style="display: none; padding: 12px; border-radius: 10px; font-size: 0.88rem;" id="contactAlert"></div>
+
+          <div class="form-field">
+            <label for="cName">Your Full Name *</label>
+            <input type="text" id="cName" placeholder="e.g. John Doe" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-field">
+              <label for="cEmail">Email Address *</label>
+              <input type="email" id="cEmail" placeholder="john@example.com" required>
+            </div>
+            <div class="form-field">
+              <label for="cPhone">Mobile / WhatsApp Number</label>
+              <input type="tel" id="cPhone" placeholder="+1 (555) 000-0000">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="cCloud">Deployment Preference</label>
+            <select id="cCloud">
+              <option value="AWS Cloud">AWS (ECS / EKS / Lambda)</option>
+              <option value="Google Cloud">Google Cloud (Cloud Run / GKE)</option>
+              <option value="Microsoft Azure">Microsoft Azure Container Apps</option>
+              <option value="On-Premises">On-Premises (Docker / Self-Hosted K8s)</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="cMessage">Describe What You Want to Build *</label>
+            <textarea id="cMessage" rows="4" placeholder="Tell us about your app concept, WhatsApp integration needs, or database setup..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn-pill-primary" id="contactSubmitBtn" style="width: 100%; justify-content: center; padding: 14px;">
+            <span>Send Message</span>
+            <i class='bx bx-paper-plane'></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="brand-icon" style="width: 32px; height: 32px; font-size: 1rem;">
+          <i class='bx bx-git-repo-forked'></i>
+        </div>
+        <span style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800;">AppForge Studio</span>
+      </div>
+
+      <div style="display: flex; gap: 24px; font-size: 0.9rem;">
+        <a href="#home" style="color: var(--text-muted); text-decoration: none;">Home</a>
+        <a href="#services" style="color: var(--text-muted); text-decoration: none;">Services</a>
+        <a href="#pipeline" style="color: var(--text-muted); text-decoration: none;">8-Stage Pipeline</a>
+        <a href="#whatsapp" style="color: var(--text-muted); text-decoration: none;">WhatsApp API</a>
+        <a href="#contact" style="color: var(--text-muted); text-decoration: none;">Contact Us</a>
+        <a href="/auth" style="color: #ff8833; text-decoration: none; font-weight: 600;">Sign In / Sign Up</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 AppForge Studio. Built with Localhost MongoDB & Node.js.</span>
+      <span style="color: #34d399; display: flex; align-items: center; gap: 6px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+        Localhost MongoDB: 27017 Active
+      </span>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

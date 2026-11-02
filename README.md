@@ -35,7 +35,7 @@ Every application follows this industry-standard 8-stage engineering pipeline:
 | Stage | Pipeline Stage Name | Category | Real-World Developer Tasks | Status |
 | :---: | :--- | :--- | :--- | :---: |
 | **1** | **Architecture & Scaffolding** | Build & Monorepo | Stack selection (React 19, Next.js 15, Express), dependency resolution, client chunk optimization, and multi-stage Alpine Dockerfile packaging. | **GREEN ✓** |
-| **2** | **API & WhatsApp Integration** | Webhooks & Messaging | Pre-wiring official WhatsApp Cloud API, Stripe payment sessions, OpenAI agent hooks, and transactional email connectors. | **GREEN ✓** |
+| **2** | **Third-Party APIs Integration** | Webhooks & Messaging | Pre-wiring third-party developer APIs including WhatsApp Cloud API, Stripe payment sessions, OpenAI agent hooks, and transactional email connectors. | **GREEN ✓** |
 | **3** | **Automated Test Matrix** | Test Automation | 64 automated Vitest & Supertest unit tests, component mock servers, and integration regression tests (100% passing). | **GREEN ✓** |
 | **4** | **Static Code Quality & Sonar Gate** | Code Quality | SonarQube static analysis, ESLint standards, cyclomatic complexity auditing, and Grade A+ quality gate verification (0 code smells). | **GREEN ✓** |
 | **5** | **OWASP & Container Security Audit** | Security Compliance | OWASP Top 10 vulnerability inspection, automated secret scanning, and container CVE vulnerability audits via Trivy. | **GREEN ✓** |
