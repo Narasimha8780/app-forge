@@ -34,7 +34,7 @@ class Project {
       database: options.database || "postgres",
       framework: options.stack || "node",
       deploymentType: "cloud",
-      cloudProvider: "Google Cloud Run",
+      cloudProvider: null,
       brief: {},
       pipelineStages: createCleanStages(),
       envVars: [],

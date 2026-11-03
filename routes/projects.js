@@ -25,6 +25,7 @@ const {
   httpUrl,
   validateBrief,
 } = require("../services/pipeline");
+const { deploymentPlan } = require("../services/deployment-plan");
 const { blueprint } = require("../services/blueprint");
 const router = express.Router();
 router.use(authMiddleware);
@@ -47,7 +48,7 @@ function present(p) {
   const next = { ...p, pipelineStages: stages };
   delete next.envVars;
   delete next.integrations;
-  return { ...next, readiness: readiness(next) };
+  return { ...next, readiness: readiness(next), deploymentPlan: deploymentPlan(next) };
 }
 router.get(
   "/",

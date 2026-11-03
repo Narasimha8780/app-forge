@@ -388,3 +388,18 @@ test("login does not recreate an application after the last app is deleted", asy
     [],
   );
 });
+
+test('cloud requirements persist and produce the matching owner-run deployment plan', async () => {
+  const created = await request('POST', '/api/projects', { name: 'Cloud guidance', stack: 'python', database: 'none' });
+  const id = created.data.project._id;
+  assert.equal(created.data.project.deploymentPlan.cloud, null);
+  const saved = await request('PUT', `/api/projects/${id}/brief`, { name: 'Cloud guidance', stack: 'python', database: 'none', brief: { ...brief, cloud: 'azure', region: 'eastus', domain: 'app.example.com', requirements: 'Staging first, private network' } });
+  assert.equal(saved.status, 200);
+  const read = await request('GET', `/api/projects/${id}`);
+  assert.equal(read.data.project.brief.cloud, 'azure');
+  assert.equal(read.data.project.deploymentPlan.target, 'Container Apps');
+  assert.equal(read.data.project.deploymentPlan.steps.length, 6);
+  assert.ok(read.data.project.pipelineStages.every(s => s.status === 'pending'));
+  assert.equal((await request('GET', `/api/projects/${id}`, undefined, otherToken)).status, 404);
+  await request('DELETE', `/api/projects/${id}`);
+});

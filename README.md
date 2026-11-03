@@ -1,8 +1,17 @@
 # DevMatrix Studio
 
-A guided delivery workspace for Java, Node.js, and Python applications. Define a brief, choose MongoDB/PostgreSQL/MySQL, and progress through eight release gates with owner-recorded evidence.
+A requirements-first deployment planning workspace for Java, Node.js and Python apps on GCP, AWS or Azure. Users keep control of their cloud accounts; the primary workflow needs no cloud permissions or GitHub connection.
 
-The platform provides a plan, runtime-specific container templates, and an evidence record. With an operator-approved Cloud Build target, it can dispatch real deployment jobs, follow provider status, and display build/runtime logs. It also checks owned domains’ DNS and TLS certificates. Builds, scans, migrations, and releases execute in the configured CI and cloud tools; manual delivery gates remain separate from provider status.
+Create an app, then record its goal, audience, runtime, database, target cloud, region, constraints and optional custom domain. Save requirements to see a six-step approach:
+
+1. App information and resource requirements.
+2. Runtime dependencies and cloud-specific deployment files (Cloud Build, CodeBuild or Azure Pipelines).
+3. Cloud resources, database setup, IAM, networking and security.
+4. Build-time and runtime environment variables and secret references.
+5. Testing, error diagnosis, reviewed fixes, staging deployment and rollback.
+6. Domain mapping, DNS, HTTPS and operational handover.
+
+Plans use Cloud Run, ECS Fargate and Container Apps as initial container hosting choices. They are review checklists, not repository inspections or cloud readiness reports. Users run commands, inspect resources and apply fixes in their own tools. Requirements and region are preserved with the app; no secret values should be entered. Runtime Dockerfiles remain downloadable starters that must be adapted to the actual repository. Optional historical evidence gates remain available in a collapsed section. Legacy provider integration APIs are retained, but the primary dashboard does not load or request them.
 
 ## Develop
 

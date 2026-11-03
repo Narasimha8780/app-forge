@@ -185,6 +185,10 @@ function validateBrief(input) {
     "repositoryUrl",
     "owner",
     "notes",
+    "cloud",
+    "region",
+    "domain",
+    "requirements",
   ]) {
     if (
       typeof (input[key] ?? "") !== "string" ||
@@ -195,6 +199,10 @@ function validateBrief(input) {
       });
     result[key] = (input[key] || "").trim();
   }
+  if (result.cloud && !['gcp', 'aws', 'azure'].includes(result.cloud))
+    throw Object.assign(new Error('Choose GCP, AWS or Azure'), { status: 400 });
+  if (result.domain && (result.domain.length > 253 || !/^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$/.test(result.domain)))
+    throw Object.assign(new Error('Enter a domain name without a URL, path or credentials'), { status: 400 });
   if (
     result.repositoryUrl &&
     (!httpUrl(result.repositoryUrl) ||

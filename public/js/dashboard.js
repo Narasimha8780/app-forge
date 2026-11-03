@@ -118,14 +118,13 @@ function render() {
   $("pageTitle").textContent = current.name;
   $("breadcrumbProject").textContent = current.name;
   $("pageDescription").textContent =
-    "Your application, from a focused brief to an operational handover.";
-  const completed = current.pipelineStages.filter(
-    (s) => s.status === "completed",
-  ).length;
-  $("progressValue").textContent = completed + " / 8";
-  $("progressFill").style.width = (completed / 8) * 100 + "%";
+    "Plan deployment in your own cloud, from requirements to domain mapping.";
+  const completed = current.readiness.checks.filter(c => c.passed).length;
+  $("progressValue").textContent = completed + " / " + current.readiness.checks.length;
+  $("progressFill").style.width = (completed / current.readiness.checks.length) * 100 + "%";
   $("progressBar").setAttribute("aria-valuenow", completed);
-  const next = current.pipelineStages.find((s) => s.status !== "completed");
+  $("progressBar").setAttribute("aria-valuemax", current.readiness.checks.length);
+  const next = {name: "Review deployment approach", step: 1, category: "Plan in your own cloud"};
   $("nextAction").textContent = !current.readiness.ready
     ? "Complete your brief"
     : next
@@ -140,7 +139,7 @@ function render() {
   $("databaseValue").textContent =
     databases[current.database] || "Choose a database";
   $("briefStatus").textContent = current.readiness.ready
-    ? "Ready for delivery"
+    ? "Requirements recorded"
     : "Draft brief";
   $("briefStatus").className =
     "pill" + (current.readiness.ready ? " green" : "");
@@ -153,6 +152,10 @@ function render() {
     briefRepository: b.repositoryUrl,
     briefAcceptance: b.acceptanceCriteria,
     briefNotes: b.notes,
+    briefCloud: b.cloud,
+    briefRegion: b.region,
+    briefDomain: b.domain,
+    briefRequirements: b.requirements,
   }))
     $(id).value = value || "";
   $("briefStack").value = current.stack || "node";
@@ -163,10 +166,16 @@ function render() {
         `<span class="pill ${c.passed ? "green" : ""}" title="${escapeHTML(c.passed ? "Complete" : c.action)}">${c.passed ? "✓" : "○"} ${escapeHTML(c.name)}</span>`,
     )
     .join("");
+  renderPlan();
   renderStages();
   renderActivity();
   window.githubConnection?.load(current);
   changeView(activeView);
+}
+function renderPlan() {
+  const plan = current.deploymentPlan;
+  if (!plan) return;
+  $("guidancePlan").innerHTML = `<div class="notice"><strong>${escapeHTML(plan.cloud || 'Choose your cloud in App requirements')}${plan.target ? ' · ' + escapeHTML(plan.target) : ''}</strong><p>${escapeHTML(plan.status)}</p><p>Region: ${escapeHTML(plan.requirements.region)}</p><p>Requirements: ${escapeHTML(plan.requirements.constraints)}</p><p>Constraints & decisions: ${escapeHTML(plan.requirements.notes)}</p><p>DevMatrix provides the approach and review checklist. You inspect resources, run commands and apply fixes in your own tools. Never share cloud credentials or secret values.</p></div>` + plan.steps.map((step, i) => `<article class="panel section-pad"><div class="panel-head"><h2>${i + 1}. ${escapeHTML(step.title)}</h2><span class="pill">Not verified</span></div><div class="panel-body"><ul class="checklist">${step.actions.map(action => `<li>${escapeHTML(action)}</li>`).join('')}</ul></div></article>`).join('');
 }
 function renderStages() {
   $("stageList").innerHTML = current.pipelineStages
@@ -314,6 +323,10 @@ $("briefForm").addEventListener("submit", async (event) => {
       acceptanceCriteria: $("briefAcceptance").value,
       owner: $("briefOwner").value,
       notes: $("briefNotes").value,
+      cloud: $("briefCloud").value,
+      region: $("briefRegion").value,
+      domain: $("briefDomain").value,
+      requirements: $("briefRequirements").value,
     },
   };
   const changed =
@@ -337,9 +350,10 @@ $("briefForm").addEventListener("submit", async (event) => {
     });
     selectedStep = data.project.readiness.nextStep || 8;
     updateProject(data.project);
+    changeView("pipeline");
     toast(
       data.project.readiness.ready
-        ? "Brief saved. You can start the delivery pipeline."
+        ? "Requirements saved. Review your deployment approach."
         : "Draft saved. Add the missing fields to continue.",
     );
   } catch (e) {
@@ -354,7 +368,7 @@ $("reviewBtn").addEventListener("click", async () => {
       method: "POST",
       body: "{}",
     });
-    if (data.readiness.ready) {
+    if (current.brief?.cloud) {
       changeView("pipeline");
       toast(data.message);
     } else {
