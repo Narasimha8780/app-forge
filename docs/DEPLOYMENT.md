@@ -29,7 +29,7 @@ SQL uses a `devmatrix_documents` table with JSON/JSONB documents and unique acco
 ## Prerequisites
 
 1. Enable Cloud Run, Cloud Build, Artifact Registry, and Secret Manager APIs.
-2. Create an Artifact Registry Docker repository (default `app-forge`) in your selected region.
+2. Create an Artifact Registry Docker repository (`narasimha8780`) in your selected region.
 3. Create a dedicated runtime service account. Grant Secret Manager Secret Accessor only on the relevant runtime secrets. Grant Cloud SQL Client if using Cloud SQL connectors.
 4. Configure database connectivity: Atlas IP access/networking for MongoDB, or VPC connectivity/Cloud SQL for SQL. Do not expose a private database publicly to make connectivity work. Use a reachable hostname and verified TLS. Cloud SQL socket/connector configuration must be added for your topology; this app's URL configuration supports ordinary TCP endpoints.
 5. Create runtime secrets `app-forge-jwt` and either `app-forge-database` or `app-forge-database`. Do not reuse the development example values.
@@ -37,30 +37,26 @@ SQL uses a `devmatrix_documents` table with JSON/JSONB documents and unique acco
 
 ## Cloud Build trigger
 
-Connect the GitHub repository `Narasimha8780/app-forge`, select branch `main`, and use `cloudbuild.yaml`. Create an Artifact Registry **Docker repository named `app-forge`** in `us-central1`. If your existing registry repository is `narasimha8780`, set `_AR_REPOSITORY=narasimha8780`; no source edit is needed.
+Connect the GitHub repository `Narasimha8780/app-forge`, select branch `main`, and use `cloudbuild.yaml`. The Artifact Registry Docker repository is **`narasimha8780`**, in **`us-central1`**. GitHub's repository name and Artifact Registry's repository name are separate.
 
-The image path is `us-central1-docker.pkg.dev/PROJECT_ID/app-forge/app-forge:COMMIT_SHA`. The first `app-forge` is the Artifact Registry repository; the second is the image name. Cloud Run defaults to service `app-forge`.
-
-Set these trigger **substitutions** (names and non-secret settings only):
+Set this custom substitution in the Cloud Build trigger:
 
 ```text
-_REGION=us-central1
-_AR_REPOSITORY=app-forge
-_SERVICE_NAME=app-forge
-_RUNTIME_SERVICE_ACCOUNT=app-forge-runtime@YOUR_PROJECT_ID.iam.gserviceaccount.com
-_DB_ENGINE=mongodb
-_DB_NAME=devmatrix_db
-_DB_SSL=true
-_JWT_SECRET_NAME=app-forge-jwt
-_DATABASE_ENV=MONGO_URI
-_DATABASE_SECRET_NAME=app-forge-database
+_SERVICE_NAME=YOUR_CLOUD_RUN_SERVICE_NAME
 ```
 
-For PostgreSQL, set `_DB_ENGINE=postgres` and `_DATABASE_ENV=DATABASE_URL`; for MySQL use `_DB_ENGINE=mysql` and `_DATABASE_ENV=DATABASE_URL`. Put the matching connection URL in the `app-forge-database` secret. `_DB_SSL=true` enables verified SQL TLS; configure a trusted CA mount on Cloud Run when the provider needs one. MongoDB TLS is configured by its connection URI.
+The image paths follow your requested layout:
 
-Before the first trigger, create the runtime service account and both Secret Manager secrets. The JWT secret value must contain at least 32 random characters; the database secret value is your real connection URI. Grant the runtime service account access to those two secrets. The YAML binds these secrets and database settings during `gcloud run deploy`, so it can create the first service as well as update an existing one. Other existing runtime variables and secret bindings are preserved. Configure optional `CORS_ORIGINS`, SQL CA mounts, and VPC connectivity in Cloud Run as required. A private database requires the appropriate network configuration before deployment can become healthy.
+```text
+us-central1-docker.pkg.dev/PROJECT_ID/narasimha8780/app-forge/web/BRANCH_NAME:COMMIT_SHA
+us-central1-docker.pkg.dev/PROJECT_ID/narasimha8780/app-forge/web:latest
+```
 
-`PROJECT_ID` and `COMMIT_SHA` are built-in trigger values. For a manual build, supply a commit SHA substitution. A branch name is intentionally not used as an image tag/path, so branch names containing slashes or uppercase characters do not break builds. `VITE_API_URL` is not used: this is an Express application serving a same-origin frontend, with no Vite build step.
+`PROJECT_ID`, `BRANCH_NAME`, and `COMMIT_SHA` are built-in GitHub branch-trigger substitutions. Use the `main` branch for this deployment. For a manual build, supply `BRANCH_NAME=main` and a commit SHA. Other branch names must contain valid lowercase Docker path characters; branches with uppercase names are not suitable for this image layout.
+
+Configure application runtime ENVs, Secret Manager bindings, runtime service account, and database networking **in Cloud Run**. The YAML deliberately does not overwrite those settings. At minimum set `DB_ENGINE=mongodb` (or `postgres`/`mysql`), bind `JWT_SECRET`, and bind `MONGO_URI` (MongoDB) or `DATABASE_URL` (SQL). Use `DB_SSL=true` for verified remote SQL TLS. See the full runtime variable table above. The first service creation needs these settings too; create/configure the service with an initial image and its runtime settings before using the ongoing GitHub trigger, or include them in your initial manual deployment. Startup will fail if required secrets or database connectivity are missing.
+
+The build service account needs Service Account User on the runtime service account configured in Cloud Run. This YAML uses the service's existing account, or Cloud Run's default for a new service. No secret values or database settings belong in Docker build arguments. `VITE_API_URL` is omitted because this app uses an Express-served, same-origin frontend without a Vite build step.
 
 The pipeline runs real tests, attempts to pull the previous `latest` image for caching, builds with inline cache metadata, tags the image with the commit SHA and `latest`, pushes both, deploys the immutable commit tag, and checks `/api/health`. A missing cache is tolerated; build, test, push, deploy, and health failures fail the pipeline. `latest` is a cache tag, not proof of a successful production release.
 
