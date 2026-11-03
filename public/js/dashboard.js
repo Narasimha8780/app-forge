@@ -8,7 +8,8 @@ let projects = [],
   selectedStep = 1,
   activeView = "brief",
   template,
-  toastTimer;
+  toastTimer,
+  currentUser;
 const stacks = {
   node: "Node.js · Express",
   java: "Java · Spring Boot",
@@ -104,8 +105,13 @@ function render() {
       )
       .join("") || "<option>No applications</option>";
   if (!current) {
-    $("pageTitle").textContent = "Your delivery workspace";
+    $("pageTitle").textContent =
+      `Welcome, ${currentUser?.firstName || "there"}.`;
+    $("pageDescription").textContent =
+      "Create your first application when you’re ready.";
     $("breadcrumbProject").textContent = "Applications";
+    window.workspaceOperations?.open(null, activeView);
+    window.githubConnection?.load(null);
     return;
   }
   $("projectSelect").value = current._id;
@@ -159,6 +165,7 @@ function render() {
     .join("");
   renderStages();
   renderActivity();
+  window.githubConnection?.load(current);
   changeView(activeView);
 }
 function renderStages() {
@@ -372,7 +379,9 @@ $("deleteProjectBtn").addEventListener("click", async () => {
   try {
     await api(`/projects/${current._id}`, { method: "DELETE" });
     projects = projects.filter((p) => p._id !== current._id);
-    selectProject(projects[0]?._id);
+    selectProject(
+      new URLSearchParams(location.search).get("project") || projects[0]?._id,
+    );
     toast("Application deleted.");
   } catch (e) {
     toast(e.message, true);
@@ -394,10 +403,15 @@ $("downloadBlueprintBtn").addEventListener("click", () => {
   if (!token) return location.replace("/auth");
   try {
     const user = (await api("/auth/me")).user;
+    currentUser = user;
     $("userName").textContent = user.firstName + " " + user.lastName;
-    $("userAvatar").textContent = user.firstName[0].toUpperCase();
+    $("userAvatar").textContent = (user.firstName || user.username || "U")
+      .charAt(0)
+      .toUpperCase();
     projects = (await api("/projects")).projects;
-    selectProject(projects[0]?._id);
+    selectProject(
+      new URLSearchParams(location.search).get("project") || projects[0]?._id,
+    );
     health();
     setInterval(health, 30000);
   } catch (e) {

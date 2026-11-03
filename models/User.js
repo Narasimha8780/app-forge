@@ -61,7 +61,7 @@ class User {
     password,
   }) {
     // Basic validations
-    if (!firstName || !lastName) {
+    if (!firstName || !lastName || !firstName.trim() || !lastName.trim()) {
       throw new Error("First name and Last name are required.");
     }
     if (!username || username.trim().length < 3) {

@@ -14,7 +14,7 @@ cp .env.example .env
 npm run dev
 ```
 
-Open the application on port 5000. Register an account; there is no supported shared demo credential. Development defaults to file storage. For local data isolation, set `LOCAL_DB_PATH` to a path outside tracked `data/db.json`. Production requires a durable database and a signing secret.
+Open the application on port 5000. Register an account, then sign in. New accounts start with an empty dashboard; applications are created only through Create new app. There is no supported shared demo credential. Development defaults to file storage. For local data isolation, set `LOCAL_DB_PATH` to a path outside tracked `data/db.json`. Production requires a durable database and a signing secret.
 
 ```sh
 npm test
@@ -46,3 +46,7 @@ The database selected inside an application brief describes that application's a
 ## Real operations
 
 See [deployment jobs, live logs, DNS, and certificate setup](docs/OPERATIONS.md) for Cloud Run ENVs and port, `DEPLOYMENT_TARGETS_JSON`, runtime IAM, log scopes, and domain ownership verification. These integrations remain unconfigured until an operator supplies the target mappings and runtime identity permissions. No customer job is automatically launched by opening the UI.
+
+## Signup, GitHub, and pipeline behavior
+
+See [the user journey and pipeline guide](docs/PIPELINE.md) for explicit login after signup, an empty first dashboard, GitHub OAuth/repository selection, the eight manual gates, and the separate real deployment/log/DNS integrations. GitHub OAuth requires `APP_BASE_URL`, `GITHUB_CLIENT_ID`, and Secret Manager-backed `GITHUB_CLIENT_SECRET`.

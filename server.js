@@ -60,6 +60,7 @@ app.use(
   }),
 );
 app.use("/api/auth", require("./routes/auth").router);
+app.use("/api/github", require("./routes/github").createGitHubRouter());
 app.use(
   "/api/projects",
   require("./routes/operations").createOperationsRouter(),

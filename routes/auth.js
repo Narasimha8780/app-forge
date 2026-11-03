@@ -1,12 +1,20 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const { Project } = require("../models/Project");
 
 const router = express.Router();
-const JWT_SECRET =
-  process.env.JWT_SECRET ||
-  require("node:crypto").randomBytes(48).toString("hex");
+const { JWT_SECRET } = require("../config/security");
+
+// A fresh account/sign-in cancels a GitHub linking flow started by another
+// platform account in this browser.
+function clearPendingGitHub(res) {
+  res.clearCookie("devmatrix_github_oauth", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/api/github/callback",
+  });
+}
 
 // Helper to sign JWT
 function generateToken(user) {
@@ -27,12 +35,10 @@ function generateToken(user) {
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res
-      .status(401)
-      .json({
-        success: false,
-        error: "Authentication required. Please sign in.",
-      });
+    return res.status(401).json({
+      success: false,
+      error: "Authentication required. Please sign in.",
+    });
   }
 
   const token = authHeader.split(" ")[1];
@@ -41,12 +47,10 @@ function authMiddleware(req, res, next) {
     req.user = decoded;
     next();
   } catch (err) {
-    return res
-      .status(401)
-      .json({
-        success: false,
-        error: "Invalid or expired session. Please sign in again.",
-      });
+    return res.status(401).json({
+      success: false,
+      error: "Invalid or expired session. Please sign in again.",
+    });
   }
 }
 
@@ -77,29 +81,23 @@ router.post("/register", async (req, res) => {
       password.length > 72 ||
       Buffer.byteLength(password, "utf8") > 72
     )
-      return res
-        .status(400)
-        .json({
-          success: false,
-          error:
-            "Provide valid text fields; passwords must be at most 72 UTF-8 bytes.",
-        });
+      return res.status(400).json({
+        success: false,
+        error:
+          "Provide valid text fields; passwords must be at most 72 UTF-8 bytes.",
+      });
 
-    if (!firstName || !lastName) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          error: "First name and Last name are required.",
-        });
+    if (!firstName.trim() || !lastName.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: "First name and Last name are required.",
+      });
     }
     if (!username || username.trim().length < 3) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          error: "Username must be at least 3 characters.",
-        });
+      return res.status(400).json({
+        success: false,
+        error: "Username must be at least 3 characters.",
+      });
     }
     if (!email || !email.includes("@")) {
       return res
@@ -112,20 +110,16 @@ router.post("/register", async (req, res) => {
         .json({ success: false, error: "A valid mobile number is required." });
     }
     if (!password || password.length < 12) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          error: "Password must be at least 12 characters.",
-        });
+      return res.status(400).json({
+        success: false,
+        error: "Password must be at least 12 characters.",
+      });
     }
     if (password !== confirmPassword) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          error: "Password and Confirm Password do not match.",
-        });
+      return res.status(400).json({
+        success: false,
+        error: "Password and Confirm Password do not match.",
+      });
     }
 
     const newUser = await User.create({
@@ -137,16 +131,10 @@ router.post("/register", async (req, res) => {
       password,
     });
 
-    // Auto-create first app based on username (e.g. narasimha-app)
-    const initialAppName = `${newUser.username}-app`;
-    await Project.createDefault(newUser._id, initialAppName);
-
-    const token = generateToken(newUser);
-
+    clearPendingGitHub(res);
     return res.status(201).json({
       success: true,
-      message: "Registration successful! Welcome to DevMatrix.",
-      token,
+      message: "Registration successful. Please sign in to continue.",
       user: {
         id: newUser._id,
         firstName: newUser.firstName,
@@ -199,14 +187,9 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Ensure user has at least one project (first app created based on username)
-    const userProjects = await Project.findByUserId(user._id);
-    if (userProjects.length === 0) {
-      await Project.createDefault(user._id, `${user.username}-app`);
-    }
-
     const token = generateToken(user);
 
+    clearPendingGitHub(res);
     return res.status(200).json({
       success: true,
       message: "Login successful!",

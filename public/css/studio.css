@@ -1486,3 +1486,67 @@
     font-size: 19px;
   }
 }
+@layer components {
+  .github-connection {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 28px;
+    background: #0d151e;
+  }
+  .github-connection .section-heading {
+    margin-bottom: 14px;
+    align-items: center;
+  }
+  .github-connection .section-heading p {
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  .github-connection > p {
+    font-size: 12px;
+  }
+  .github-connection .actions {
+    gap: 8px;
+  }
+  .github-picker-actions {
+    display: flex;
+    align-items: end;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .pipeline-help {
+    margin-bottom: 20px;
+  }
+  .pipeline-help > summary {
+    padding: 20px 26px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .pipeline-help ol {
+    padding-left: 22px;
+    color: var(--muted);
+  }
+  .pipeline-help li {
+    padding: 9px 0;
+    font-size: 13px;
+  }
+  .pipeline-help strong {
+    color: var(--text);
+  }
+  .pipeline-help p {
+    font-size: 13px;
+  }
+}
+@layer responsive {
+  @media (max-width: 800px) {
+    .github-connection .section-heading .actions {
+      margin-top: 16px;
+    }
+  }
+}
+
+@layer components {
+  .empty .eyebrow {
+    justify-content: center;
+  }
+}

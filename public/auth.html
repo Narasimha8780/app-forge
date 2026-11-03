@@ -87,7 +87,7 @@
         </div>
         <div id="signupPanel" hidden>
           <div class="eyebrow">A new beginning</div>
-          <h2>Create your workspace.</h2>
+          <h2>Create your account.</h2>
           <p>Start with a brief. Make your next step clear.</p>
           <form id="registerForm">
             <div class="form-grid">
@@ -153,9 +153,7 @@
                 required
             /></label>
             <p id="registerError" class="error-text" role="alert" hidden></p>
-            <button class="button" type="submit">
-              Create your workspace →
-            </button>
+            <button class="button" type="submit">Create account →</button>
           </form>
           <div class="auth-switch">
             Already have an account?
@@ -169,5 +167,18 @@
         </div>
       </section>
     </main>
+    <dialog
+      class="modal"
+      id="signupSuccessDialog"
+      aria-labelledby="signupSuccessTitle"
+    >
+      <h2 id="signupSuccessTitle">Account created successfully.</h2>
+      <p>Your account is ready. Sign in to start your first application.</p>
+      <div class="modal-actions">
+        <button type="button" class="button" id="continueToLogin">
+          Continue to sign in →
+        </button>
+      </div>
+    </dialog>
   </body>
 </html>

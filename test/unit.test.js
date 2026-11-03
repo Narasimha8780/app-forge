@@ -38,7 +38,19 @@ async function register(username) {
     null,
   );
   assert.equal(r.status, 201);
-  return r.data.token;
+  assert.equal(
+    r.data.token,
+    undefined,
+    "Registration must not sign the user in",
+  );
+  const login = await request(
+    "POST",
+    "/api/auth/login",
+    { loginIdentifier: username, password: "Testing-unique-passphrase" },
+    null,
+  );
+  assert.equal(login.status, 200);
+  return login.data.token;
 }
 before(async () => {
   server = await startServer(0);
@@ -59,6 +71,15 @@ const brief = {
   owner: "Release owner",
   notes: "Review accessibility, backup restoration, and monthly costs.",
 };
+test("new accounts remain empty after registration, login, and repeated dashboard reads", async () => {
+  for (let i = 0; i < 2; i++) {
+    const response = await request("GET", "/api/projects");
+    assert.equal(response.status, 200);
+    assert.deepEqual(response.data.projects, []);
+  }
+  const me = await request("GET", "/api/auth/me");
+  assert.equal(me.data.user.firstName, "Test");
+});
 test("stage blueprint is clean and readiness reports missing requirements", () => {
   const stages = createCleanStages();
   assert.equal(stages.length, 8);
@@ -343,4 +364,27 @@ test("production refuses ephemeral storage and missing signing secrets", () => {
   });
   assert.equal(local.status, 1);
   assert.match(local.stderr, /Production requires/);
+});
+
+test("login does not recreate an application after the last app is deleted", async () => {
+  const me = await request("GET", "/api/auth/me");
+  assert.equal(
+    (await request("DELETE", `/api/projects/${project._id}`)).status,
+    200,
+  );
+  const login = await request(
+    "POST",
+    "/api/auth/login",
+    {
+      loginIdentifier: me.data.user.username,
+      password: "Testing-unique-passphrase",
+    },
+    null,
+  );
+  assert.equal(login.status, 200);
+  assert.deepEqual(
+    (await request("GET", "/api/projects", undefined, login.data.token)).data
+      .projects,
+    [],
+  );
 });

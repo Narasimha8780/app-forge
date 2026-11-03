@@ -40,8 +40,25 @@ function submit(formId, endpoint, errorId) {
       const data = await response.json();
       if (!response.ok)
         throw new Error(data.error || "Unable to continue. Please try again.");
-      localStorage.setItem("devmatrix_token", data.token);
-      location.href = "/dashboard";
+      if (endpoint === "register") {
+        for (const key of [
+          "devmatrix_token",
+          "appforge_token",
+          "devmatrix_user",
+          "appforge_user",
+        ])
+          localStorage.removeItem(key);
+        $("loginForm").elements.loginIdentifier.value = body.username;
+        form.reset();
+        button.disabled = false;
+        button.textContent = label;
+        location.hash = "signin";
+        mode();
+        $("signupSuccessDialog").showModal();
+      } else {
+        localStorage.setItem("devmatrix_token", data.token);
+        location.href = "/dashboard";
+      }
     } catch (e) {
       $(errorId).textContent = e.message;
       $(errorId).hidden = false;
@@ -59,3 +76,10 @@ if (existing)
       if (r.ok) location.replace("/dashboard");
     })
     .catch(() => {});
+
+$("continueToLogin").addEventListener("click", () =>
+  $("signupSuccessDialog").close(),
+);
+$("signupSuccessDialog").addEventListener("close", () =>
+  $("loginForm").elements.password.focus(),
+);

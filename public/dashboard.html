@@ -7,6 +7,7 @@
     <title>Delivery workspace | DevMatrix Studio</title>
     <link rel="stylesheet" href="/css/studio.css" />
     <script src="/js/dashboard.js" defer></script>
+    <script src="/js/github.js" defer></script>
     <script src="/js/operations.js" defer></script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
@@ -85,14 +86,12 @@
           <div id="loading" class="loading">Loading your workspace…</div>
           <div id="emptyState" class="panel empty" hidden>
             <div class="eyebrow">Your first release</div>
-            <h2>Start with one good idea.</h2>
+            <h2 id="emptyWelcome">Create your first application.</h2>
             <p>
               Create an application, write a focused brief, and choose the stack
               that fits your project.
             </p>
-            <button class="button" id="emptyCreateBtn">
-              Create an application ↗
-            </button>
+            <button class="button" id="emptyCreateBtn">Create new app ↗</button>
           </div>
           <div id="projectContent" hidden>
             <div class="stats">
@@ -146,6 +145,88 @@
                     id="readinessChecks"
                     aria-label="Brief readiness"
                   ></div>
+                  <section
+                    class="github-connection"
+                    aria-labelledby="githubConnectionTitle"
+                  >
+                    <div class="section-heading">
+                      <div>
+                        <h3 id="githubConnectionTitle">
+                          Connect your GitHub repository
+                        </h3>
+                        <p id="githubStatusText" role="status">
+                          Checking GitHub connection…
+                        </p>
+                      </div>
+                      <div class="actions">
+                        <button
+                          class="button secondary"
+                          type="button"
+                          id="connectGithubBtn"
+                          disabled
+                        >
+                          Connect GitHub ↗</button
+                        ><button
+                          class="button secondary"
+                          type="button"
+                          id="disconnectGithubBtn"
+                          hidden
+                        >
+                          Disconnect
+                        </button>
+                      </div>
+                    </div>
+                    <p id="githubScopeNote" class="text-muted"></p>
+                    <div
+                      id="githubRepositoryPicker"
+                      class="form-grid section-pad"
+                      hidden
+                    >
+                      <label
+                        >Select a repository<select id="githubRepositorySelect">
+                          <option value="">Choose a repository</option>
+                        </select></label
+                      >
+                      <div class="github-picker-actions">
+                        <button
+                          class="button secondary"
+                          type="button"
+                          id="loadMoreReposBtn"
+                          hidden
+                        >
+                          Load more repositories</button
+                        ><button
+                          class="button secondary"
+                          type="button"
+                          id="refreshReposBtn"
+                        >
+                          Refresh repositories
+                        </button>
+                      </div>
+                    </div>
+                    <p
+                      class="error-text"
+                      id="githubError"
+                      role="alert"
+                      hidden
+                    ></p>
+                    <p class="section-pad">
+                      <small
+                        >Choosing a repository fills the URL below. Save your
+                        brief to apply it. Connecting GitHub does not create a
+                        deployment trigger or start a build.</small
+                      >
+                    </p>
+                    <p id="githubRevokeNote" hidden>
+                      <a
+                        class="text-link"
+                        href="https://github.com/settings/applications"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Review or revoke access in GitHub settings ↗</a
+                      >
+                    </p>
+                  </section>
                   <form id="briefForm">
                     <div class="form-grid">
                       <label
@@ -247,6 +328,50 @@
               </div>
             </section>
             <section id="view-pipeline" class="view" hidden>
+              <details class="panel pipeline-help">
+                <summary>How does this pipeline work?</summary>
+                <div class="panel-body">
+                  <p>
+                    Start by creating an app, connecting or entering its GitHub
+                    repository, and saving a complete brief.
+                  </p>
+                  <ol>
+                    <li>
+                      <strong>Plan and record evidence:</strong> work through
+                      the eight delivery gates in order. Each gate needs your
+                      review notes and an HTTPS evidence link.
+                    </li>
+                    <li>
+                      <strong>Run real delivery:</strong> once the brief is
+                      ready and an operator approves its Cloud Build target, use
+                      Deployments &amp; logs to explicitly start that trigger.
+                      Its configured steps run in Google Cloud.
+                    </li>
+                    <li>
+                      <strong>Follow actual results:</strong> provider status
+                      and live logs show what the build did. A successful build
+                      does not automatically complete manual gates or prove the
+                      live website is healthy.
+                    </li>
+                    <li>
+                      <strong>Connect and inspect the domain:</strong> configure
+                      DNS with your provider, verify the TXT ownership
+                      challenge, and check routing and the live TLS certificate
+                      under Domains &amp; HTTPS.
+                    </li>
+                    <li>
+                      <strong>Approve the release:</strong> attach release and
+                      operational evidence to the final gates, including
+                      monitoring, support, and rollback decisions.
+                    </li>
+                  </ol>
+                  <p>
+                    GitHub connection lists accessible repositories; it does not
+                    grant the platform permission to deploy every repository.
+                    Each deployment target is approved separately.
+                  </p>
+                </div>
+              </details>
               <div class="notice">
                 <strong>A delivery plan you can trust.</strong> Run builds,
                 tests, and deployments in your own tools. Record an outcome and

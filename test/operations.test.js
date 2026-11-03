@@ -126,7 +126,18 @@ before(async () => {
       null,
     );
     assert.equal(r.status, 201);
-    return r.data.token;
+    assert.equal(r.data.token, undefined);
+    const login = await request(
+      "POST",
+      "/api/auth/login",
+      {
+        loginIdentifier: prefix + suffix,
+        password: "operations-test-passphrase",
+      },
+      null,
+    );
+    assert.equal(login.status, 200);
+    return login.data.token;
   }
   token = await register("owner");
   otherToken = await register("other");
