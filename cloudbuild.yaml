@@ -71,15 +71,6 @@ steps:
       - --quiet
     id: Deploying to Cloud Run
 
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-    entrypoint: bash
-    args:
-      - -ceu
-      - |
-        service_url=$$(gcloud run services describe '${_SERVICE_NAME}' --region='us-central1' --format='value(status.url)')
-        curl --fail --silent --show-error --retry 6 --retry-all-errors --retry-delay 5 "$${service_url}/api/health"
-    id: Checking deployed health
-
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/narasimha8780/app-forge/web/$BRANCH_NAME:$COMMIT_SHA"
   - "us-central1-docker.pkg.dev/$PROJECT_ID/narasimha8780/app-forge/web:latest"

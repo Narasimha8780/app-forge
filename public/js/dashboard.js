@@ -77,6 +77,7 @@ function changeView(view) {
     e.setAttribute("aria-current", e.dataset.view === view ? "page" : "false");
   });
   if (view === "resources" && current) loadTemplate();
+  window.workspaceOperations?.open(current, view);
 }
 function selectProject(id) {
   current = projects.find((p) => p._id === id) || projects[0];

@@ -181,9 +181,9 @@ async function connectDB() {
   if (engine === "mongodb") {
     if (!process.env.MONGO_URI && process.env.NODE_ENV === "production")
       throw new Error("MONGO_URI is required");
+    // Respect URI options, including serverSelectionTimeoutMS and authSource.
     client = new MongoClient(
       process.env.MONGO_URI || "mongodb://127.0.0.1:27017",
-      { serverSelectionTimeoutMS: 5000 },
     );
     await client.connect();
     database = client.db(process.env.DB_NAME || "devmatrix_db");

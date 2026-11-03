@@ -60,6 +60,10 @@ app.use(
   }),
 );
 app.use("/api/auth", require("./routes/auth").router);
+app.use(
+  "/api/projects",
+  require("./routes/operations").createOperationsRouter(),
+);
 app.use("/api/projects", require("./routes/projects"));
 app.use("/api/contact", require("./routes/contact"));
 app.get("/api/health", async (req, res) => {
@@ -73,12 +77,10 @@ app.get("/api/health", async (req, res) => {
       database: getStatus(),
     });
   } catch {
-    res
-      .status(503)
-      .json({
-        status: "unavailable",
-        database: { engine: getStatus().engine, connected: false },
-      });
+    res.status(503).json({
+      status: "unavailable",
+      database: { engine: getStatus().engine, connected: false },
+    });
   }
 });
 app.use(express.static(path.join(__dirname, "public")));
@@ -99,13 +101,11 @@ app.use((err, req, res, next) => {
       ? 409
       : 500);
   if (status >= 500) console.error("[Request error]", err.name);
-  res
-    .status(status)
-    .json({
-      success: false,
-      error:
-        status >= 500 ? "Something went wrong. Please try again." : err.message,
-    });
+  res.status(status).json({
+    success: false,
+    error:
+      status >= 500 ? "Something went wrong. Please try again." : err.message,
+  });
 });
 async function startServer(port = process.env.PORT || 5000) {
   if (

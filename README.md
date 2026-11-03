@@ -2,7 +2,7 @@
 
 A guided delivery workspace for Java, Node.js, and Python applications. Define a brief, choose MongoDB/PostgreSQL/MySQL, and progress through eight release gates with owner-recorded evidence.
 
-The platform does not run customer repositories, provision their databases, or deploy them when a button is clicked. It provides a plan, runtime-specific container templates, and an evidence record. Builds, scans, migrations, and releases happen in your CI and cloud tools.
+The platform provides a plan, runtime-specific container templates, and an evidence record. With an operator-approved Cloud Build target, it can dispatch real deployment jobs, follow provider status, and display build/runtime logs. It also checks owned domains’ DNS and TLS certificates. Builds, scans, migrations, and releases execute in the configured CI and cloud tools; manual delivery gates remain separate from provider status.
 
 ## Develop
 
@@ -42,3 +42,7 @@ See [Cloud Run and Cloud Build setup](docs/DEPLOYMENT.md) for runtime ENVs, Secr
 - `DB_ENGINE=postgres` / `mysql` — SQL-backed JSON document store, account uniqueness constraints, parameterized queries, and optimistic updates.
 
 The database selected inside an application brief describes that application's architecture. It does not change the database used by DevMatrix itself; configure the platform's `DB_ENGINE` separately.
+
+## Real operations
+
+See [deployment jobs, live logs, DNS, and certificate setup](docs/OPERATIONS.md) for Cloud Run ENVs and port, `DEPLOYMENT_TARGETS_JSON`, runtime IAM, log scopes, and domain ownership verification. These integrations remain unconfigured until an operator supplies the target mappings and runtime identity permissions. No customer job is automatically launched by opening the UI.

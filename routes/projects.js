@@ -1,5 +1,21 @@
 const express = require("express");
 const { Project } = require("../models/Project");
+const { getCollection } = require("../config/db");
+const { terminalStatuses } = require("../services/cloud-build");
+async function requireNoActiveDeployment(project) {
+  if (!project.activeDeploymentId) return;
+  const job = await getCollection("deployments").findOne({
+    _id: project.activeDeploymentId,
+    projectId: String(project._id),
+  });
+  if (job && !terminalStatuses.has(job.status))
+    throw Object.assign(
+      new Error(
+        "Refresh or reconcile the active deployment before changing scope or deleting this application.",
+      ),
+      { status: 409 },
+    );
+}
 const { authMiddleware } = require("./auth");
 const {
   STACKS,
@@ -51,17 +67,15 @@ router.post(
     const { stack = "node", database = "postgres" } = req.body;
     if (!Object.hasOwn(STACKS, stack) || !Object.hasOwn(DATABASES, database))
       fail("Select a supported stack and database");
-    res
-      .status(201)
-      .json({
-        success: true,
-        project: present(
-          await Project.createDefault(req.user.userId, name, {
-            stack,
-            database,
-          }),
-        ),
-      });
+    res.status(201).json({
+      success: true,
+      project: present(
+        await Project.createDefault(req.user.userId, name, {
+          stack,
+          database,
+        }),
+      ),
+    });
   }),
 );
 // All per-project routes share ownership enforcement, including export and edits.
@@ -94,6 +108,7 @@ router.put(
       stack !== req.project.stack ||
       database !== req.project.database ||
       JSON.stringify(brief) !== JSON.stringify(req.project.brief || {});
+    if (changed) await requireNoActiveDeployment(req.project);
     const pipelineStages = changed
       ? createCleanStages()
       : current.pipelineStages;
@@ -121,6 +136,14 @@ router.put(
 router.delete(
   "/:id",
   wrap(async (req, res) => {
+    await requireNoActiveDeployment(req.project);
+    const records = await (
+      await getCollection("deployments").find({
+        projectId: String(req.project._id),
+      })
+    ).toArray();
+    for (const job of records)
+      await getCollection("deployments").deleteOne({ _id: job._id });
     await Project.deleteProject(req.params.id);
     res.json({ success: true });
   }),
@@ -196,21 +219,17 @@ router.get(
 );
 // Do not persist plaintext runtime secrets or pretend toggles connect providers.
 router.put("/:id/env", (req, res) =>
-  res
-    .status(410)
-    .json({
-      success: false,
-      error:
-        "Store runtime secrets in your deployment provider’s secret manager.",
-    }),
+  res.status(410).json({
+    success: false,
+    error:
+      "Store runtime secrets in your deployment provider’s secret manager.",
+  }),
 );
 router.put("/:id/integrations", (req, res) =>
-  res
-    .status(410)
-    .json({
-      success: false,
-      error:
-        "Configure integrations in your application and record evidence in stage 2.",
-    }),
+  res.status(410).json({
+    success: false,
+    error:
+      "Configure integrations in your application and record evidence in stage 2.",
+  }),
 );
 module.exports = router;

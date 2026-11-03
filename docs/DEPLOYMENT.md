@@ -58,11 +58,11 @@ Configure application runtime ENVs, Secret Manager bindings, runtime service acc
 
 The build service account needs Service Account User on the runtime service account configured in Cloud Run. This YAML uses the service's existing account, or Cloud Run's default for a new service. No secret values or database settings belong in Docker build arguments. `VITE_API_URL` is omitted because this app uses an Express-served, same-origin frontend without a Vite build step.
 
-The pipeline runs real tests, attempts to pull the previous `latest` image for caching, builds with inline cache metadata, tags the image with the commit SHA and `latest`, pushes both, deploys the immutable commit tag, and checks `/api/health`. A missing cache is tolerated; build, test, push, deploy, and health failures fail the pipeline. `latest` is a cache tag, not proof of a successful production release.
+The pipeline runs real tests, attempts to pull the previous `latest` image for caching, builds with inline cache metadata, tags the image with the commit SHA and `latest`, pushes both, and deploys the immutable commit tag. A missing cache is tolerated; build, test, push, and deploy failures fail the pipeline. `latest` is a cache tag, not proof of a successful production release.
 
-The supplied deployment explicitly makes the website public with `--allow-unauthenticated`; the application still requires login for workspaces. If your organization requires IAM ingress, remove that flag and adapt the health request to supply an authorized identity token. The build service account needs permission to set public access, not merely update the container image.
+The supplied deployment explicitly makes the website public with `--allow-unauthenticated`; the application still requires login for workspaces. If your organization requires IAM ingress, remove that flag. The build service account needs permission to set public access, not merely update the container image.
 
-A failed health check fails the build; it does not automatically roll back traffic. Enable approval on a production trigger, use a staging service first, and explicitly roll back to the previous known-good revision on failure. No cloud deployment is executed merely by committing these files.
+The build does not include a post-deployment HTTP health check or automatic rollback. Verify the running application separately. Enable approval on a production trigger, use a staging service first, and explicitly roll back to the previous known-good revision on failure. No cloud deployment is executed merely by committing these files.
 
 ## Operational checklist
 
@@ -73,3 +73,7 @@ A failed health check fails the build; it does not automatically roll back traff
 - Rate limiting in this starter is per process; use a shared limiter/edge protection for distributed production traffic. LocalStorage bearer sessions remain vulnerable to any future XSS; retain the strict CSP and plan HttpOnly cookies, CSRF handling, session revocation, account recovery, and email verification for a public identity service.
 - Set a secret-rotation and dependency-update process. Integration credentials belong in your application secret manager; the workspace never stores them.
 - Evidence is an owner attestation, not an independent audit or CI callback. For team review, build roles, approval separation, CI webhooks with signature verification, and an append-only audit store before treating gates as compliance controls.
+
+## Connected deployment workspace
+
+For the additional runtime configuration, service-account permissions, and domain checks, see [Operations integration](OPERATIONS.md). Container port is 8080; Cloud Run supplies `PORT`.

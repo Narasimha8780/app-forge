@@ -7,6 +7,7 @@
     <title>Delivery workspace | DevMatrix Studio</title>
     <link rel="stylesheet" href="/css/studio.css" />
     <script src="/js/dashboard.js" defer></script>
+    <script src="/js/operations.js" defer></script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
@@ -23,8 +24,15 @@
             <button type="button" class="active" data-view="brief">
               <span aria-hidden="true">▤</span>Project brief</button
             ><button type="button" data-view="pipeline">
-              <span aria-hidden="true">↳</span>Delivery pipeline</button
-            ><button type="button" data-view="resources">
+              <span aria-hidden="true">↳</span>Delivery pipeline
+            </button>
+            <button type="button" data-view="operations">
+              <span aria-hidden="true">↗</span>Deployments & logs
+            </button>
+            <button type="button" data-view="domains">
+              <span aria-hidden="true">◎</span>Domains & HTTPS
+            </button>
+            <button type="button" data-view="resources">
               <span aria-hidden="true">⌘</span>Deploy & configure</button
             ><button type="button" data-view="activity">
               <span aria-hidden="true">◷</span>Evidence history
@@ -388,6 +396,205 @@
                     >
                     for IAM, database connectivity, and the release process.
                   </p>
+                </div>
+              </div>
+            </section>
+
+            <section id="view-operations" class="view" hidden>
+              <div class="notice">
+                <strong>Connected delivery.</strong> Run an operator-approved
+                Cloud Build trigger, follow its actual status, and read build or
+                Cloud Run logs. A successful build confirms the configured
+                trigger completed; it does not independently prove every manual
+                delivery gate.
+              </div>
+              <div class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h2>Deployment connection</h2>
+                    <p id="deploymentTarget">Loading the approved target…</p>
+                  </div>
+                  <span class="pill" id="deploymentConnection">Checking</span>
+                </div>
+                <div class="panel-body">
+                  <p>Workspace ID: <code id="operationsWorkspaceId"></code></p>
+                  <p id="deploymentSetup" class="callout">
+                    Ask the operator to map this workspace ID to its repository,
+                    Cloud Build trigger, and dedicated Cloud Run service.
+                  </p>
+                  <label class="checkbox"
+                    ><input type="checkbox" id="deploymentAcknowledge" /><span
+                      >I authorize running the configured trigger. Its steps may
+                      build images and deploy changes to the target
+                      service.</span
+                    ></label
+                  >
+                  <div class="form-actions">
+                    <button
+                      class="button"
+                      id="startDeploymentBtn"
+                      type="button"
+                      disabled
+                    >
+                      Run approved trigger ↗</button
+                    ><button
+                      class="button secondary"
+                      id="refreshDeploymentsBtn"
+                      type="button"
+                    >
+                      Refresh connection
+                    </button>
+                  </div>
+                  <p
+                    class="error-text"
+                    id="deploymentError"
+                    role="alert"
+                    hidden
+                  ></p>
+                </div>
+              </div>
+              <div class="panel section-pad">
+                <div class="panel-head">
+                  <div>
+                    <h2>Runs & live logs</h2>
+                    <p>
+                      Logs refresh every 10 seconds while this view is visible.
+                      Latest 100 entries; secrets must never be written to
+                      application logs.
+                    </p>
+                  </div>
+                  <span class="pill" id="deploymentStatus" role="status"
+                    >No run selected</span
+                  >
+                </div>
+                <div class="panel-body">
+                  <div class="form-grid">
+                    <label
+                      >Deployment run<select id="deploymentSelect">
+                        <option value="">No runs yet</option>
+                      </select></label
+                    ><label
+                      >Log source<select id="deploymentLogKind">
+                        <option value="build">Cloud Build output</option>
+                        <option value="runtime">
+                          Cloud Run application logs
+                        </option>
+                      </select></label
+                    >
+                  </div>
+                  <p id="deploymentSummary" class="section-pad text-muted">
+                    Run the approved trigger to see its real provider status.
+                  </p>
+                  <p id="deploymentProviderLink"></p>
+                  <p id="deploymentLogNote" class="section-pad text-muted"></p>
+                  <pre
+                    id="deploymentLogs"
+                    tabindex="0"
+                    aria-label="Deployment log output"
+                  >
+No provider logs loaded.</pre>
+                </div>
+              </div>
+            </section>
+            <section id="view-domains" class="view" hidden>
+              <div class="notice">
+                <strong>Connect your domain deliberately.</strong> Verify
+                ownership with a TXT record, compare DNS with your operator’s
+                expected records, then inspect the live TLS certificate. Domain
+                registration, DNS changes, and certificate issuance remain with
+                your registrar and hosting provider.
+              </div>
+              <div class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h2>Domain & certificate checks</h2>
+                    <p>Enter a domain you control. Public hostnames only.</p>
+                  </div>
+                  <span id="domainOverall" class="pill">Not configured</span>
+                </div>
+                <div class="panel-body">
+                  <form id="domainForm">
+                    <label
+                      >Application domain<input
+                        id="domainNameInput"
+                        maxlength="253"
+                        placeholder="app.example.com"
+                        required
+                    /></label>
+                    <div class="form-actions">
+                      <button class="button" type="submit">Save domain</button
+                      ><button
+                        class="button secondary"
+                        type="button"
+                        id="checkDomainBtn"
+                        disabled
+                      >
+                        Check DNS & HTTPS
+                      </button>
+                    </div>
+                  </form>
+                  <p
+                    id="domainError"
+                    class="error-text"
+                    role="alert"
+                    hidden
+                  ></p>
+                  <div id="domainInstructions" hidden>
+                    <h3 class="section-pad">1. Prove domain ownership</h3>
+                    <p class="section-pad">
+                      Publish this TXT record with your DNS provider. It
+                      contains a public verification challenge, not an account
+                      credential.
+                    </p>
+                    <pre id="domainChallenge"></pre>
+                    <h3 class="section-pad">2. Check routing & HTTPS</h3>
+                    <div class="stats">
+                      <div class="stat">
+                        <small>Ownership</small
+                        ><strong id="domainOwnership">Not checked</strong>
+                      </div>
+                      <div class="stat">
+                        <small>DNS routing</small
+                        ><strong id="domainRouting">Not checked</strong>
+                      </div>
+                      <div class="stat">
+                        <small>TLS certificate</small
+                        ><strong id="domainCertificate">Not checked</strong
+                        ><span id="domainExpiry"></span>
+                      </div>
+                    </div>
+                    <p id="domainCheckTime" class="text-muted"></p>
+                    <div class="table-scroll section-pad">
+                      <table class="env-table">
+                        <thead>
+                          <tr>
+                            <th>DNS record</th>
+                            <th>Observed value</th>
+                            <th>Expected value</th>
+                          </tr>
+                        </thead>
+                        <tbody id="domainRecordRows"></tbody>
+                      </table>
+                    </div>
+                    <p id="domainTLSMessage" class="section-pad text-muted"></p>
+                    <details class="section-pad">
+                      <summary>Technical check details</summary>
+                      <pre
+                        id="domainRecords"
+                        tabindex="0"
+                        aria-label="DNS records and certificate details"
+                      >
+Check DNS to load observed records.</pre>
+                    </details>
+                    <div class="callout">
+                      In Cloud Run, create the custom-domain mapping or
+                      configure your load balancer, then publish the records it
+                      provides. Ask your operator to add those expected records
+                      to this workspace’s deployment target. DNS matches and a
+                      valid certificate do not by themselves prove the intended
+                      application is serving content.
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>

@@ -1470,3 +1470,19 @@
     }
   }
 }
+@layer components {
+  #operationsWorkspaceId {
+    overflow-wrap: anywhere;
+  }
+  #deploymentLogs {
+    min-height: 240px;
+    max-height: 500px;
+  }
+  #domainRecords,
+  #domainChallenge {
+    overflow-wrap: anywhere;
+  }
+  #domainInstructions .stat strong {
+    font-size: 19px;
+  }
+}
