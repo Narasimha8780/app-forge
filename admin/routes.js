@@ -17,7 +17,7 @@ function present(row,kind) {
   const common={id:String(row._id),email:row.email,createdAt:row.createdAt,support:supportOf(row)};
   return kind==='users' ? {...common,name:[row.firstName,row.lastName].filter(Boolean).join(' '),username:row.username,phone:row.mobile,role:row.role==='admin'?'admin':'user'} : {...common,name:row.name,phone:row.phone,subject:row.subject,message:row.message,preferredCloud:row.preferredCloud};
 }
-router.get('/me',(req,res)=>res.json({success:true,name:req.admin.firstName}));
+router.get('/me',(req,res)=>res.json({success:true,name:req.admin.firstName, standalone: Boolean(req.app.locals.standaloneAdmin), appUrl: process.env.APP_PUBLIC_URL || ''}));
 router.get('/overview',wrap(async(req,res)=>{
   const [users,contacts]=await Promise.all(['users','contacts'].map(async kind=>(await getCollection(kind).find({})).toArray()));
   const week=Date.now()-7*86400000;
