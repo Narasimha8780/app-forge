@@ -1,24 +1,33 @@
-const { getCollection } = require('../config/db');
+const { getCollection } = require("../config/db");
 
 class Contact {
   static collection() {
-    return getCollection('contacts');
+    return getCollection("contacts");
   }
 
-  static async create({ name, email, phone, subject, message, preferredCloud }) {
+  static async create({
+    name,
+    email,
+    phone,
+    subject,
+    message,
+    preferredCloud,
+  }) {
     if (!name || !email || !message) {
-      throw new Error('Name, Email and Message are required.');
+      throw new Error("Name, Email and Message are required.");
     }
 
     const doc = {
       name: name.trim(),
       email: email.trim().toLowerCase(),
-      phone: phone ? phone.trim() : '',
-      subject: subject ? subject.trim() : 'App Development & Deployment Inquiry',
+      phone: phone ? phone.trim() : "",
+      subject: subject
+        ? subject.trim()
+        : "App Development & Deployment Inquiry",
       message: message.trim(),
-      preferredCloud: preferredCloud || 'AWS / Cloud Provider',
-      status: 'new',
-      createdAt: new Date().toISOString()
+      preferredCloud: preferredCloud || "AWS / Cloud Provider",
+      status: "new",
+      createdAt: new Date().toISOString(),
     };
 
     const res = await this.collection().insertOne(doc);
@@ -33,4 +42,3 @@ class Contact {
 }
 
 module.exports = Contact;
-

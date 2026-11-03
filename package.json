@@ -1,12 +1,12 @@
 {
   "name": "devmatrix-platform",
-  "version": "1.0.0",
-  "description": "DevMatrix - End-to-End App Development, Multi-App Management & Automated 8-Stage CI/CD Pipeline",
+  "version": "2.0.0",
+  "description": "DevMatrix Studio — guided application delivery with evidence-based release gates",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node test/unit.test.js"
+    "test": "node --test test/*.test.js"
   },
   "keywords": [
     "app-development",
@@ -23,7 +23,14 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-rate-limit": "^8.7.3",
+    "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.5.0"
+    "mongodb": "^6.5.0",
+    "mysql2": "^3.24.6",
+    "pg": "^8.23.1"
+  },
+  "engines": {
+    "node": ">=24 <25"
   }
 }

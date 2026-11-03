@@ -1,0 +1,102 @@
+# Deploy this app-forge repository to Cloud Run.
+# Secret values stay in Secret Manager; substitutions below contain names only.
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  - name: node:24-bookworm-slim
+    entrypoint: bash
+    args: ["-ceu", "npm ci --no-audit --no-fund && npm test"]
+    id: Testing the application
+
+  # A missing cache is expected on the first build; the build itself must succeed.
+  - name: gcr.io/cloud-builders/docker
+    entrypoint: bash
+    args:
+      - -c
+      - 'docker pull ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/app-forge:latest || echo "Cache unavailable; building without it."'
+    id: Pulling cached image
+
+  - name: gcr.io/cloud-builders/docker
+    env: ["DOCKER_BUILDKIT=1"]
+    args:
+      - build
+      - --target
+      - runtime
+      - -t
+      - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/app-forge:$COMMIT_SHA"
+      - --cache-from
+      - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/app-forge:latest"
+      - --build-arg
+      - BUILDKIT_INLINE_CACHE=1
+      - -f
+      - Dockerfile
+      - .
+    id: Building the container image
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [
+        "tag",
+        "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/app-forge:$COMMIT_SHA",
+        "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/app-forge:latest",
+      ]
+    id: Tagging as latest
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [
+        "push",
+        "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/app-forge:$COMMIT_SHA",
+      ]
+    id: Pushing the image to registry
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [
+        "push",
+        "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/app-forge:latest",
+      ]
+    id: Pushing latest tag
+
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - run
+      - deploy
+      - "${_SERVICE_NAME}"
+      - "--image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/app-forge:$COMMIT_SHA"
+      - "--region=${_REGION}"
+      - --platform=managed
+      - --allow-unauthenticated
+      - "--service-account=${_RUNTIME_SERVICE_ACCOUNT}"
+      - "--update-env-vars=NODE_ENV=production,DB_ENGINE=${_DB_ENGINE},DB_NAME=${_DB_NAME},DB_SSL=${_DB_SSL}"
+      - "--update-secrets=JWT_SECRET=${_JWT_SECRET_NAME}:latest,${_DATABASE_ENV}=${_DATABASE_SECRET_NAME}:latest"
+      - --quiet
+    id: Deploying to Cloud Run
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        service_url=$$(gcloud run services describe '${_SERVICE_NAME}' --region='${_REGION}' --format='value(status.url)')
+        curl --fail --silent --show-error --retry 6 --retry-all-errors --retry-delay 5 "$${service_url}/api/health"
+    id: Checking deployed health
+
+images:
+  - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/app-forge:$COMMIT_SHA"
+  - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/app-forge:latest"
+
+substitutions:
+  _REGION: us-central1
+  _AR_REPOSITORY: app-forge
+  _SERVICE_NAME: app-forge
+  _RUNTIME_SERVICE_ACCOUNT: set-runtime-service-account-in-trigger
+  _DB_ENGINE: mongodb
+  _DB_NAME: devmatrix_db
+  _DB_SSL: "true"
+  _JWT_SECRET_NAME: app-forge-jwt
+  _DATABASE_ENV: MONGO_URI
+  _DATABASE_SECRET_NAME: app-forge-database
+
+timeout: 1200s

@@ -1,19 +1,23 @@
-const { getCollection, ObjectId } = require('../config/db');
-const bcrypt = require('bcryptjs');
+const { getCollection, ObjectId } = require("../config/db");
+const bcrypt = require("bcryptjs");
 
 class User {
   static collection() {
-    return getCollection('users');
+    return getCollection("users");
   }
 
   static async findByUsername(username) {
     if (!username) return null;
-    return await this.collection().findOne({ username: username.toLowerCase().trim() });
+    return await this.collection().findOne({
+      username: username.toLowerCase().trim(),
+    });
   }
 
   static async findByEmail(email) {
     if (!email) return null;
-    return await this.collection().findOne({ email: email.toLowerCase().trim() });
+    return await this.collection().findOne({
+      email: email.toLowerCase().trim(),
+    });
   }
 
   static async findByMobile(mobile) {
@@ -26,7 +30,7 @@ class User {
     if (!id) return null;
     try {
       let query = { _id: id };
-      if (typeof id === 'string' && id.length === 24) {
+      if (typeof id === "string" && id.length === 24) {
         query = { $or: [{ _id: id }, { _id: new ObjectId(id) }] };
       }
       return await this.collection().findOne(query);
@@ -43,31 +47,34 @@ class User {
 
     const col = this.collection();
     const user = await col.findOne({
-      $or: [
-        { username: cleanLower },
-        { email: cleanLower },
-        { mobile: clean }
-      ]
+      $or: [{ username: cleanLower }, { email: cleanLower }, { mobile: clean }],
     });
     return user;
   }
 
-  static async create({ firstName, lastName, username, email, mobile, password }) {
+  static async create({
+    firstName,
+    lastName,
+    username,
+    email,
+    mobile,
+    password,
+  }) {
     // Basic validations
     if (!firstName || !lastName) {
-      throw new Error('First name and Last name are required.');
+      throw new Error("First name and Last name are required.");
     }
     if (!username || username.trim().length < 3) {
-      throw new Error('Username must be at least 3 characters.');
+      throw new Error("Username must be at least 3 characters.");
     }
-    if (!email || !email.includes('@')) {
-      throw new Error('A valid email address is required.');
+    if (!email || !email.includes("@")) {
+      throw new Error("A valid email address is required.");
     }
     if (!mobile || mobile.trim().length < 7) {
-      throw new Error('A valid mobile number is required.');
+      throw new Error("A valid mobile number is required.");
     }
-    if (!password || password.length < 6) {
-      throw new Error('Password must be at least 6 characters long.');
+    if (!password || password.length < 12) {
+      throw new Error("Password must be at least 12 characters long.");
     }
 
     const cleanUsername = username.toLowerCase().trim();
@@ -79,19 +86,19 @@ class User {
       $or: [
         { username: cleanUsername },
         { email: cleanEmail },
-        { mobile: cleanMobile }
-      ]
+        { mobile: cleanMobile },
+      ],
     });
 
     if (existingUser) {
       if (existingUser.username === cleanUsername) {
-        throw new Error('Username is already taken. Please choose another.');
+        throw new Error("Username is already taken. Please choose another.");
       }
       if (existingUser.email === cleanEmail) {
-        throw new Error('Email ID is already registered.');
+        throw new Error("Email ID is already registered.");
       }
       if (existingUser.mobile === cleanMobile) {
-        throw new Error('Mobile number is already registered.');
+        throw new Error("Mobile number is already registered.");
       }
     }
 
@@ -106,7 +113,7 @@ class User {
       mobile: cleanMobile,
       passwordHash,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     const res = await this.collection().insertOne(newUser);
@@ -121,4 +128,3 @@ class User {
 }
 
 module.exports = User;
-

@@ -1,89 +1,44 @@
-# DevMatrix Studio 🚀
-### End-to-End Assisted App Development, Multi-App Management, 8-Stage Green Pipeline & Third-Party APIs
+# DevMatrix Studio
 
-DevMatrix Studio empowers founders, developers, and teams to build, test, and deploy production-grade software end-to-end without getting trapped in complex DevOps configurations.
+A guided delivery workspace for Java, Node.js, and Python applications. Define a brief, choose MongoDB/PostgreSQL/MySQL, and progress through eight release gates with owner-recorded evidence.
 
----
+The platform does not run customer repositories, provision their databases, or deploy them when a button is clicked. It provides a plan, runtime-specific container templates, and an evidence record. Builds, scans, migrations, and releases happen in your CI and cloud tools.
 
-## 🌟 Visual Theme & Design Architecture
+## Develop
 
-### 1. Dark Neon Glowing Aesthetic (Entire Platform)
-- Consistent across the **Homepage** (`/`), **Sign In / Sign Up** (`/auth`), and **Dashboard** (`/dashboard`).
-- Deep space charcoal backdrop (`#0A0C10`, `#12141C`) with glowing neon orange and amber gradients (`#FF6A00`, `#FF9900`, `#EE0979`).
-- Glowing glassmorphic cards with neon border glow (`box-shadow: 0 0 40px rgba(255, 106, 0, 0.45)`).
-- **Authentication Page** (`/auth`):
-  - Exact sliding diagonal panel animation (`.container.active` with `0.7s cubic-bezier`).
-  - **Register**: First Name, Last Name, Unique Username, Email ID, Mobile Number, Password & Confirm Password.
-  - **Login**: Flexible login supporting **Username**, **Email ID**, or **Mobile Number** + Password.
+Requires Node.js 24 and npm. Use the existing checkout; no additional worktree is required.
 
----
-
-## 📱 Multi-App Management (APP-1, APP-2, Inline Rename)
-
-Inside the User Dashboard (`/dashboard`):
-- **Dynamic App Switcher Pills**: Easily toggle between your deployed applications: `APP-1`, `APP-2`, `APP-3`, etc.
-- **Modify & Rename Apps**: Click the **"Rename App"** pencil button to change any app's name (e.g. rename `APP-1` to `Storefront E-Commerce API`).
-- **Create New App**: Click the **"+ Create New App"** button to scaffold a new application with framework stack selection (React 19, Next.js 15, FastAPI, Flutter Mobile).
-- **Independent State**: Each app maintains its own isolated 8-stage pipeline, environment variables, WhatsApp webhook settings, and logs in MongoDB.
-
----
-
-## ⚡ The 8-Stage Production Lifecycle Pipeline (Green Marks)
-
-Every application follows this industry-standard 8-stage engineering pipeline:
-
-| Stage | Pipeline Stage Name | Category | Real-World Developer Tasks | Status |
-| :---: | :--- | :--- | :--- | :---: |
-| **1** | **Architecture & Scaffolding** | Build & Monorepo | Stack selection (React 19, Next.js 15, Express), dependency resolution, client chunk optimization, and multi-stage Alpine Dockerfile packaging. | **GREEN ✓** |
-| **2** | **Third-Party APIs Integration** | Webhooks & Messaging | Pre-wiring third-party developer APIs including WhatsApp Cloud API, Stripe payment sessions, OpenAI agent hooks, and transactional email connectors. | **GREEN ✓** |
-| **3** | **Automated Test Matrix** | Test Automation | 64 automated Vitest & Supertest unit tests, component mock servers, and integration regression tests (100% passing). | **GREEN ✓** |
-| **4** | **Static Code Quality & Sonar Gate** | Code Quality | SonarQube static analysis, ESLint standards, cyclomatic complexity auditing, and Grade A+ quality gate verification (0 code smells). | **GREEN ✓** |
-| **5** | **OWASP & Container Security Audit** | Security Compliance | OWASP Top 10 vulnerability inspection, automated secret scanning, and container CVE vulnerability audits via Trivy. | **GREEN ✓** |
-| **6** | **Database Provisioning & Migration** | Data Layer | Localhost MongoDB (`mongodb://127.0.0.1:27017/devmatrix_db`) setup, unique composite indexes, schema models, and daily backup policies. | **GREEN ✓** |
-| **7** | **Cloud / On-Prem Deployment** | Deployment | Rolling zero-downtime blue/green deployment to **Cloud Provider (AWS ECS / GCP Cloud Run)** or **On-Premises (Docker Swarm / Kubernetes)**. | **GREEN ✓** |
-| **8** | **Zero-Trust Network & Live Production** | Production & Monitoring | Let's Encrypt TLS 1.3 auto-certificates, Helmet security headers, CORS origin whitelist, Cloudflare WAF, and 24/7 synthetic health checks (200 OK, 14ms). | **GREEN ✓** |
-
----
-
-## 💬 WhatsApp Cloud API Integration (Add-on)
-
-- **Official Meta Graph API v20.0 Ready**
-- Pre-configured webhook listener at `/api/webhook/whatsapp`
-- Interactive **"Send Test WhatsApp Message"** modal inside the dashboard to simulate OTP verification codes and deployment notifications
-- Ready for customer chat support, order alerts, and two-factor authentication.
-
----
-
-## 🍃 Localhost MongoDB Database
-
-- **Connection URI**: `mongodb://127.0.0.1:27017/devmatrix_db`
-- **Native MongoDB Driver**: Uses native `mongodb` client with automatic reconnection
-- **Resilient Auto-Failover Store**: Includes an automatic file-backed JSON/BSON fallback (`data/db.json`) implementing the MongoDB Collection API so the platform can run immediately with zero friction even before `mongod` is started!
-
----
-
-## 🚀 Quick Start Guide
-
-### 1. Start Application Server
-```bash
-cd /Users/narasimha/Desktop/html/website
-npm start
+```sh
+npm ci
+cp .env.example .env
+npm run dev
 ```
 
-### 2. Access the Application
-- 🌐 **Landing Page**: [http://localhost:5000](http://localhost:5000)
-- 🔐 **Sign In / Sign Up**: [http://localhost:5000/auth](http://localhost:5000/auth)
-- 📊 **User Pipeline Dashboard**: [http://localhost:5000/dashboard](http://localhost:5000/dashboard)
-- 🩺 **Health Telemetry**: [http://localhost:5000/api/health](http://localhost:5000/api/health)
+Open the application on port 5000. Register an account; there is no supported shared demo credential. Development defaults to file storage. For local data isolation, set `LOCAL_DB_PATH` to a path outside tracked `data/db.json`. Production requires a durable database and a signing secret.
 
-#### Pre-Seeded Demo Account (contains APP-1 & APP-2):
-- **Username**: `demouser`
-- **Email**: `alex@devmatrix.io`
-- **Mobile**: `+15551234567`
-- **Password**: `Password123`
-
-### 3. Run Automated Tests
-```bash
+```sh
 npm test
 ```
-All 7 enhanced unit and pipeline tests will execute and pass with green marks.
+
+Tests create an isolated temporary local store by default. Set `DB_ENGINE` and the relevant connection variables to exercise an external disposable database. External tests write records, so never point them at production. GitHub Actions runs the same suite against local storage, PostgreSQL, MySQL, and MongoDB.
+
+## Delivery flow
+
+1. Create an application and select Node.js/Express, Java/Spring Boot, or Python/FastAPI.
+2. Define the goal, audience, repository, release owner, and acceptance criteria. Include accessibility, privacy, cost, recovery, and support needs.
+3. Review the saved brief's readiness. Missing fields remain actionable; readiness does not claim the app was built.
+4. Work through define/design, implementation, testing, review, security, data, staging, and operations.
+5. Attach an HTTPS evidence link and explain the outcome at each stage. Earlier gates must be recorded first. Evidence is explicitly an owner attestation.
+6. Export a starter Dockerfile, run and verify it in your repository, and configure secrets in your cloud provider.
+
+Changing the brief or stack starts a new delivery cycle and clears current evidence; keep external records as your durable source of truth. Legacy stages with no owner evidence are displayed as pending. Existing legacy secret fields are excluded from project responses; remove old stored plaintext credentials from the database and rotate them if previously used.
+
+## Deploy
+
+See [Cloud Run and Cloud Build setup](docs/DEPLOYMENT.md) for runtime ENVs, Secret Manager bindings, trigger substitutions, database networking, IAM, deployment, and operational limitations. The included `Dockerfile` runs this platform; exported Dockerfiles target customer applications.
+
+- `DB_ENGINE=local` — development only, no automatic fallback or cross-engine migration.
+- `DB_ENGINE=mongodb` — native MongoDB collections with account uniqueness indexes.
+- `DB_ENGINE=postgres` / `mysql` — SQL-backed JSON document store, account uniqueness constraints, parameterized queries, and optimistic updates.
+
+The database selected inside an application brief describes that application's architecture. It does not change the database used by DevMatrix itself; configure the platform's `DB_ENGINE` separately.

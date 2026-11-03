@@ -1,167 +1,173 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In & Register | DevMatrix Studio</title>
-  <link rel="stylesheet" href="css/auth.css?v=2.0">
-  <!-- Boxicons for sleek SVG icons -->
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-</head>
-<body>
-
-  <!-- Top Navigation Header -->
-  <header class="auth-header">
-    <a href="/" class="logo">
-      <div class="logo-icon">
-        <i class='bx bx-git-repo-forked' style="font-size: 20px;"></i>
-      </div>
-      <span>DevMatrix</span>
-    </a>
-    <a href="/" class="back-btn">
-      <i class='bx bx-left-arrow-alt'></i>
-      <span>Back to Home</span>
-    </a>
-  </header>
-
-  <!-- Animated Sliding Container (Video 1 Reference) -->
-  <div class="container" id="authContainer">
-
-    <!-- LOGIN FORM (Left on default) -->
-    <div class="form-box login">
-      <form id="loginForm">
-        <h2>Login</h2>
-        <p class="subtitle">Access your 7-stage app deployment dashboard</p>
-
-        <div class="form-alert" id="loginAlert"></div>
-
-        <div class="input-group">
-          <input type="text" id="loginIdentifier" placeholder="Username, Email or Mobile" required autocomplete="username">
-          <i class='bx bxs-user icon'></i>
-        </div>
-
-        <div class="input-group">
-          <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
-          <i class='bx bxs-lock-alt icon'></i>
-        </div>
-
-        <button type="submit" class="btn" id="loginSubmitBtn">
-          <span>Login</span>
-          <i class='bx bx-right-arrow-alt'></i>
-        </button>
-
-        <div class="switch-text">
-          <p>Don't have an account? <a href="#" id="toSignupLink">Sign Up</a></p>
-        </div>
-      </form>
-    </div>
-
-    <!-- REGISTER FORM (Right on default, slides into view) -->
-    <div class="form-box register">
-      <form id="registerForm">
-        <h2>Register</h2>
-        <p class="subtitle">Build, test & deploy apps end-to-end</p>
-
-        <div class="form-alert" id="registerAlert"></div>
-
-        <div class="input-row">
-          <div class="input-group">
-            <input type="text" id="regFirstName" placeholder="First Name" required>
-            <i class='bx bx-id-card icon'></i>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Your workspace starts here | DevMatrix Studio</title>
+    <link rel="stylesheet" href="/css/studio.css" />
+    <script src="/js/auth.js" defer></script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip" href="#authMain">Skip to sign in</a>
+    <header class="wrap site-nav">
+      <a class="brand" href="/"
+        ><span class="brand-mark">d.</span
+        ><span>devmatrix<small>DEVELOPMENT STUDIO</small></span></a
+      ><a class="button secondary" href="/">← Back to studio</a>
+    </header>
+    <main class="wrap auth-layout" id="authMain">
+      <section class="auth-story">
+        <div class="eyebrow">From a focused idea to a thoughtful release</div>
+        <h1>Your next chapter<br />starts with a plan.</h1>
+        <p>
+          A workspace for the decisions, deliverables, and evidence that move
+          your application forward.
+        </p>
+        <div class="auth-points">
+          <div class="auth-point">
+            <span class="mono">01</span>
+            <div>
+              <h3>Define what success looks like.</h3>
+              <p>
+                Capture the audience, scope, and measurable outcomes for your
+                first release.
+              </p>
+            </div>
           </div>
-          <div class="input-group">
-            <input type="text" id="regLastName" placeholder="Last Name" required>
-            <i class='bx bx-user icon'></i>
+          <div class="auth-point">
+            <span class="mono">02</span>
+            <div>
+              <h3>Choose a familiar foundation.</h3>
+              <p>
+                Java, Node.js, or Python. MongoDB, PostgreSQL, or MySQL. A
+                delivery plan that fits your app.
+              </p>
+            </div>
+          </div>
+          <div class="auth-point">
+            <span class="mono">03</span>
+            <div>
+              <h3>Move forward with evidence.</h3>
+              <p>
+                Follow eight delivery gates and keep your review notes and
+                release records together.
+              </p>
+            </div>
           </div>
         </div>
-
-        <div class="input-group">
-          <input type="text" id="regUsername" placeholder="Unique Username" required autocomplete="username">
-          <i class='bx bx-at icon'></i>
-        </div>
-
-        <div class="input-row">
-          <div class="input-group">
-            <input type="email" id="regEmail" placeholder="Email ID" required autocomplete="email">
-            <i class='bx bxs-envelope icon'></i>
-          </div>
-          <div class="input-group">
-            <input type="tel" id="regMobile" placeholder="Mobile Number" required autocomplete="tel">
-            <i class='bx bxs-phone icon'></i>
-          </div>
-        </div>
-
-        <div class="input-row">
-          <div class="input-group">
-            <input type="password" id="regPassword" placeholder="Password" required autocomplete="new-password">
-            <i class='bx bxs-lock-alt icon'></i>
-          </div>
-          <div class="input-group">
-            <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required autocomplete="new-password">
-            <i class='bx bx-check-shield icon'></i>
-          </div>
-        </div>
-
-        <button type="submit" class="btn" id="registerSubmitBtn">
-          <span>Create Account</span>
-          <i class='bx bx-user-plus'></i>
-        </button>
-
-        <div class="switch-text">
-          <p>Already have an account? <a href="#" id="toSigninLink">Sign In</a></p>
-        </div>
-      </form>
-    </div>
-
-    <!-- SLIDING DECORATIVE PANELS & DIAGONAL SPLIT (Video 1 Reference) -->
-    <div class="toggle-box">
-      <!-- Diagonal Glowing Shape -->
-      <div class="curved-shape"></div>
-
-      <!-- Left Panel (Shows when Registering) -->
-      <div class="toggle-panel toggle-left">
-        <h1>WELCOME!</h1>
-        <p>We're delighted to have you here. If you need any assistance, feel free to reach out.</p>
-        <div class="badge-pills">
-          <div class="badge-pill">
-            <span class="icon-check">✓</span>
-            <span>7-Step Guided Pipeline (App Build to Live)</span>
-          </div>
-          <div class="badge-pill">
-            <span class="icon-check">✓</span>
-            <span>Localhost MongoDB Database Ready</span>
-          </div>
-          <div class="badge-pill">
-            <span class="icon-check">✓</span>
-            <span>Cloud (AWS/GCP) & On-Premises Deployments</span>
+      </section>
+      <section class="auth-forms">
+        <div id="signinPanel">
+          <div class="eyebrow">Welcome back</div>
+          <h2>Pick up where you left off.</h2>
+          <p>Sign in to your application workspace.</p>
+          <form id="loginForm">
+            <label
+              >Username, email, or mobile<input
+                name="loginIdentifier"
+                autocomplete="username"
+                maxlength="254"
+                required /></label
+            ><label
+              >Password<input
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                maxlength="72"
+                required
+            /></label>
+            <p id="loginError" class="error-text" role="alert" hidden></p>
+            <button class="button" type="submit">Sign in to workspace →</button>
+          </form>
+          <div class="auth-switch">
+            New to DevMatrix?
+            <button type="button" id="showSignup">Create an account ↗</button>
           </div>
         </div>
-      </div>
-
-      <!-- Right Panel (Shows when Logging In) -->
-      <div class="toggle-panel toggle-right">
-        <h1>WELCOME BACK!</h1>
-        <p>We are happy to have you with us again. If you need anything, we are here to help.</p>
-        <div class="badge-pills">
-          <div class="badge-pill">
-            <span class="icon-check">✓</span>
-            <span>Automated Testing & Code Quality Audits</span>
-          </div>
-          <div class="badge-pill">
-            <span class="icon-check">✓</span>
-            <span>Third-Party APIs & Secret Variables Manager</span>
-          </div>
-          <div class="badge-pill">
-            <span class="icon-check">✓</span>
-            <span>Live Real-Time Terminal Execution</span>
+        <div id="signupPanel" hidden>
+          <div class="eyebrow">A new beginning</div>
+          <h2>Create your workspace.</h2>
+          <p>Start with a brief. Make your next step clear.</p>
+          <form id="registerForm">
+            <div class="form-grid">
+              <label
+                >First name<input
+                  name="firstName"
+                  autocomplete="given-name"
+                  maxlength="100"
+                  required /></label
+              ><label
+                >Last name<input
+                  name="lastName"
+                  autocomplete="family-name"
+                  maxlength="100"
+                  required
+              /></label>
+            </div>
+            <label
+              >Username<input
+                name="username"
+                autocomplete="username"
+                minlength="3"
+                maxlength="100"
+                required
+            /></label>
+            <div class="form-grid">
+              <label
+                >Email address<input
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  maxlength="254"
+                  required /></label
+              ><label
+                >Mobile number<input
+                  name="mobile"
+                  type="tel"
+                  autocomplete="tel"
+                  minlength="7"
+                  maxlength="40"
+                  required
+              /></label>
+            </div>
+            <label
+              >Password<input
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                minlength="12"
+                maxlength="72"
+                required
+              /><small
+                >Use at least 12 characters, up to 72 UTF-8 bytes. A unique
+                passphrase works well.</small
+              ></label
+            ><label
+              >Confirm password<input
+                name="confirmPassword"
+                type="password"
+                autocomplete="new-password"
+                minlength="12"
+                maxlength="72"
+                required
+            /></label>
+            <p id="registerError" class="error-text" role="alert" hidden></p>
+            <button class="button" type="submit">
+              Create your workspace →
+            </button>
+          </form>
+          <div class="auth-switch">
+            Already have an account?
+            <button type="button" id="showSignin">Sign in ↗</button>
           </div>
         </div>
-      </div>
-    </div>
-
-  </div>
-
-  <script src="js/auth.js"></script>
-</body>
+        <div class="callout">
+          Keep passwords, access tokens, and customer data out of project briefs
+          and evidence links. Configure runtime secrets in your deployment
+          provider.
+        </div>
+      </section>
+    </main>
+  </body>
 </html>
-

@@ -1,0 +1,58 @@
+name: Platform tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  local:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+  persistence:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        engine: [postgres, mysql, mongodb]
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: integration-only
+          POSTGRES_DB: devmatrix_test
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 20
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: integration-only
+          MYSQL_DATABASE: devmatrix_test
+        ports: ["3306:3306"]
+        options: --health-cmd "mysqladmin ping -h localhost -pintegration-only" --health-interval 5s --health-timeout 5s --health-retries 30
+      mongodb:
+        image: mongo:8
+        ports: ["27017:27017"]
+        options: --health-cmd "mongosh --quiet --eval 'db.runCommand({ping:1})'" --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Database workflow
+        env:
+          DB_ENGINE: "${{ matrix.engine }}"
+          DB_NAME: devmatrix_test
+          MONGO_URI: mongodb://127.0.0.1:27017
+        run: |
+          if [ "$DB_ENGINE" = postgres ]; then export DATABASE_URL=postgresql://postgres:integration-only@127.0.0.1:5432/devmatrix_test; fi
+          if [ "$DB_ENGINE" = mysql ]; then export DATABASE_URL=mysql://root:integration-only@127.0.0.1:3306/devmatrix_test; fi
+          npm test

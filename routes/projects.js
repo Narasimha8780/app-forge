@@ -1,281 +1,216 @@
-const express = require('express');
-const { Project, STAGES_BLUEPRINT, createCleanStages } = require('../models/Project');
-const { authMiddleware } = require('./auth');
-
+const express = require("express");
+const { Project } = require("../models/Project");
+const { authMiddleware } = require("./auth");
+const {
+  STACKS,
+  DATABASES,
+  createCleanStages,
+  readiness,
+  httpUrl,
+  validateBrief,
+} = require("../services/pipeline");
+const { blueprint } = require("../services/blueprint");
 const router = express.Router();
 router.use(authMiddleware);
-
-// GET /api/projects - list user's projects (APP-1, APP-2, etc.)
-router.get('/', async (req, res) => {
-  try {
-    let list = await Project.findByUserId(req.user.userId);
-    if (list.length === 0) {
-      // Auto-create first app based on username (e.g. username-app)
-      const defaultName = req.user.username ? `${req.user.username}-app` : 'APP-1';
-      const initialApp = await Project.createDefault(req.user.userId, defaultName);
-      list = [initialApp];
-    }
-    return res.json({ success: true, projects: list });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// POST /api/projects - create new app (APP-1, APP-2, or custom name)
-router.post('/', async (req, res) => {
-  try {
-    const { name, framework, deploymentType, cloudProvider } = req.body;
-    const project = await Project.createDefault(req.user.userId, name || null);
-    
-    if (framework || deploymentType || cloudProvider) {
-      const col = Project.collection();
-      await col.updateOne(
-        { _id: project._id },
-        {
-          $set: {
-            framework: framework || project.framework,
-            deploymentType: deploymentType || project.deploymentType,
-            cloudProvider: cloudProvider || project.cloudProvider,
-            updatedAt: new Date().toISOString()
-          }
-        }
-      );
-    }
-    const updated = await Project.findById(project._id);
-    return res.status(201).json({ success: true, project: updated });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// PUT /api/projects/:id/rename - modify app name (e.g. APP-1 -> E-Commerce API)
-router.put('/:id/rename', async (req, res) => {
-  try {
-    const { name } = req.body;
-    if (!name || !name.trim()) {
-      return res.status(400).json({ success: false, error: 'App name cannot be empty.' });
-    }
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ success: false, error: 'App not found' });
-    if (project.userId !== req.user.userId) {
-      return res.status(403).json({ success: false, error: 'Unauthorized.' });
-    }
-
-    const updatedName = await Project.updateName(req.params.id, name);
-    return res.json({ success: true, name: updatedName });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// DELETE /api/projects/:id - delete an app
-router.delete('/:id', async (req, res) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ success: false, error: 'App not found' });
-    if (project.userId !== req.user.userId) {
-      return res.status(403).json({ success: false, error: 'Unauthorized.' });
-    }
-
+const wrap = (fn) => (req, res, next) =>
+  Promise.resolve(fn(req, res, next)).catch(next);
+const fail = (message, status = 400) => {
+  throw Object.assign(new Error(message), { status });
+};
+const nameOf = (name) => {
+  if (typeof name !== "string" || !name.trim() || name.length > 100)
+    fail("Application name must be 1–100 characters");
+  return name.trim();
+};
+function present(p) {
+  // Legacy stages were set complete without execution. Require new evidence.
+  const stages = createCleanStages().map((s) => {
+    const old = p.pipelineStages?.find((o) => o.id === s.id);
+    return old?.evidence?.source === "owner_attestation" ? { ...s, ...old } : s;
+  });
+  const next = { ...p, pipelineStages: stages };
+  delete next.envVars;
+  delete next.integrations;
+  return { ...next, readiness: readiness(next) };
+}
+router.get(
+  "/",
+  wrap(async (req, res) =>
+    res.json({
+      success: true,
+      projects: (await Project.findByUserId(req.user.userId)).map(present),
+      stacks: STACKS,
+      databases: DATABASES,
+    }),
+  ),
+);
+router.post(
+  "/",
+  wrap(async (req, res) => {
+    const name = nameOf(req.body.name);
+    const { stack = "node", database = "postgres" } = req.body;
+    if (!Object.hasOwn(STACKS, stack) || !Object.hasOwn(DATABASES, database))
+      fail("Select a supported stack and database");
+    res
+      .status(201)
+      .json({
+        success: true,
+        project: present(
+          await Project.createDefault(req.user.userId, name, {
+            stack,
+            database,
+          }),
+        ),
+      });
+  }),
+);
+// All per-project routes share ownership enforcement, including export and edits.
+router.use(
+  "/:id",
+  wrap(async (req, res, next) => {
+    const p = await Project.findById(req.params.id);
+    if (!p || String(p.userId) !== req.user.userId)
+      fail("Application not found", 404);
+    req.project = p;
+    next();
+  }),
+);
+router.get(
+  "/:id",
+  wrap(async (req, res) =>
+    res.json({ success: true, project: present(req.project) }),
+  ),
+);
+router.put(
+  "/:id/brief",
+  wrap(async (req, res) => {
+    const { stack, database } = req.body;
+    if (!Object.hasOwn(STACKS, stack) || !Object.hasOwn(DATABASES, database))
+      fail("Select a supported stack and database");
+    const brief = validateBrief(req.body.brief || {});
+    const current = present(req.project);
+    // Material scope changes require fresh gate evidence; an unchanged save is safe.
+    const changed =
+      stack !== req.project.stack ||
+      database !== req.project.database ||
+      JSON.stringify(brief) !== JSON.stringify(req.project.brief || {});
+    const pipelineStages = changed
+      ? createCleanStages()
+      : current.pipelineStages;
+    const p = await Project.save(req.project, {
+      name: nameOf(req.body.name),
+      brief,
+      stack,
+      database,
+      pipelineStages,
+    });
+    res.json({ success: true, project: present(p), reset: changed });
+  }),
+);
+router.put(
+  "/:id/rename",
+  wrap(async (req, res) =>
+    res.json({
+      success: true,
+      project: present(
+        await Project.save(req.project, { name: nameOf(req.body.name) }),
+      ),
+    }),
+  ),
+);
+router.delete(
+  "/:id",
+  wrap(async (req, res) => {
     await Project.deleteProject(req.params.id);
-    return res.json({ success: true, message: 'App deleted successfully' });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// GET /api/projects/:id
-router.get('/:id', async (req, res) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ success: false, error: 'App not found' });
-    if (project.userId !== req.user.userId) {
-      return res.status(403).json({ success: false, error: 'Unauthorized.' });
-    }
-    return res.json({ success: true, project });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// POST /api/projects/:id/pipeline/run - Run complete 8-stage pipeline
-router.post('/:id/pipeline/run', async (req, res) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ success: false, error: 'App not found' });
-    if (project.userId !== req.user.userId) {
-      return res.status(403).json({ success: false, error: 'Unauthorized.' });
-    }
-
-    const targetType = req.body.deploymentType || project.deploymentType || 'cloud';
-    const cloudOrOnPrem = targetType === 'on-prem' 
-      ? 'On-Premises (Docker Swarm / Self-Hosted K8s Cluster)' 
-      : (req.body.cloudProvider || project.cloudProvider || 'AWS ECS Fargate & Cloud Run');
-
+    res.json({ success: true });
+  }),
+);
+router.post(
+  "/:id/pipeline/run",
+  wrap(async (req, res) => {
+    const p = present(req.project);
+    const review = readiness(p);
+    res.json({
+      success: true,
+      readiness: review,
+      project: p,
+      message: review.ready
+        ? "Brief is ready. Work through each gate and record evidence. No external build or deployment was triggered."
+        : "Complete the highlighted brief fields before recording stage evidence.",
+    });
+  }),
+);
+router.put(
+  "/:id/step/:stepNum",
+  wrap(async (req, res) => {
+    const p = present(req.project);
+    const step = Number(req.params.stepNum);
+    if (!Number.isInteger(step) || step < 1 || step > 8) fail("Invalid stage");
+    if (!readiness(p).ready) fail("Complete the project brief first", 409);
+    if (
+      p.pipelineStages.slice(0, step - 1).some((s) => s.status !== "completed")
+    )
+      fail("Complete earlier stages first", 409);
+    const { summary, url, acknowledged } = req.body;
+    if (
+      typeof summary !== "string" ||
+      summary.trim().length < 20 ||
+      summary.length > 4000
+    )
+      fail("Describe the outcome in 20–4000 characters");
+    if (!httpUrl(url) || url.length > 2000)
+      fail("Provide an HTTPS evidence link without credentials");
+    if (acknowledged !== true) fail("Confirm that you reviewed this evidence");
+    if (p.pipelineStages[step - 1].status === "completed")
+      fail(
+        "Stage already recorded. Change the brief to start a new delivery cycle.",
+        409,
+      );
     const timestamp = new Date().toISOString();
-    const updatedStages = (project.pipelineStages && project.pipelineStages.length > 0 ? project.pipelineStages : createCleanStages()).map(stage => {
-      return {
-        ...stage,
-        status: 'completed',
-        timestamp
-      };
+    p.pipelineStages[step - 1] = {
+      ...p.pipelineStages[step - 1],
+      status: "completed",
+      timestamp,
+      evidence: {
+        source: "owner_attestation",
+        summary: summary.trim(),
+        url,
+        recordedBy: req.user.userId,
+        recordedAt: timestamp,
+      },
+      logs: [
+        `${timestamp} Evidence recorded by project owner. External execution is not independently verified.`,
+      ],
+    };
+    const saved = await Project.save(req.project, {
+      pipelineStages: p.pipelineStages,
     });
-
-    const col = Project.collection();
-    await col.updateOne(
-      { _id: project._id },
-      {
-        $set: {
-          pipelineStages: updatedStages,
-          deploymentType: targetType,
-          cloudProvider: cloudOrOnPrem,
-          updatedAt: timestamp
-        }
-      }
-    );
-
-    return res.json({
-      success: true,
-      message: 'Full 8-stage production pipeline executed with green marks!',
-      stages: updatedStages
-    });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// PUT /api/projects/:id/step/:stepNum - configure individual step
-router.put('/:id/step/:stepNum', async (req, res) => {
-  try {
-    const { status, config } = req.body;
-    const stages = await Project.updateStage(req.params.id, req.params.stepNum, {
-      ...(status ? { status } : {}),
-      ...(config ? { config } : {})
-    });
-    return res.json({ success: true, stages });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// PUT /api/projects/:id/env - update environment variables
-router.put('/:id/env', async (req, res) => {
-  try {
-    const { envVars } = req.body;
-    if (!Array.isArray(envVars)) {
-      return res.status(400).json({ success: false, error: 'envVars must be an array' });
-    }
-    const updated = await Project.updateEnvVars(req.params.id, envVars);
-    return res.json({ success: true, envVars: updated });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// PUT /api/projects/:id/integrations - update 3rd party add-ons (including WhatsApp)
-router.put('/:id/integrations', async (req, res) => {
-  try {
-    const { integrations } = req.body;
-    if (!Array.isArray(integrations)) {
-      return res.status(400).json({ success: false, error: 'integrations must be an array' });
-    }
-    const updated = await Project.updateIntegrations(req.params.id, integrations);
-    return res.json({ success: true, integrations: updated });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// GET /api/projects/:id/export
-router.get('/:id/export', async (req, res) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ success: false, error: 'App not found' });
-
-    const dockerfile = `# Multi-stage Dockerfile generated by DevMatrix
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build --if-present
-
-FROM node:20-alpine AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-COPY --from=builder /app ./
-EXPOSE 5000
-CMD ["node", "server.js"]
-`;
-
-    const dockerCompose = `version: '3.8'
-services:
-  ${(project.name || 'app').toLowerCase().replace(/[^a-z0-9]/g, '_')}:
-    build: .
-    restart: always
-    ports:
-      - "5000:5000"
-    environment:
-${(project.envVars || []).map(v => `      - ${v.key}=${v.value}`).join('\n')}
-    depends_on:
-      - mongodb
-
-  mongodb:
-    image: mongo:7.0
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-
-volumes:
-  mongodb_data:
-`;
-
-    const githubWorkflow = `name: 8-Stage Production CI/CD Pipeline
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  pipeline:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 1. Checkout Code
-        uses: actions/checkout@v4
-      - name: 2. Setup Node.js v20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: 3. Architecture & Scaffolding
-        run: |
-          npm ci
-          npm run build --if-present
-      - name: 4. API & WhatsApp Webhook Tests
-        run: echo "Verifying third-party APIs and WhatsApp Cloud API token..."
-      - name: 5. Automated Test Matrix
-        run: npm test --if-present
-      - name: 6. Static Code Quality & Sonar Gate
-        run: echo "SonarQube Quality Gate Grade A+ Verified"
-      - name: 7. OWASP & Container Security Audit
-        run: echo "Trivy & OWASP dependency scan passed (0 CVEs)"
-      - name: 8. Database Provisioning & Deploy to ${project.cloudProvider || 'Cloud'}
-        run: echo "Deploying container release..."
-      - name: 9. Zero-Trust Live Health Check
-        run: curl -f http://localhost:5000/api/health || exit 0
-`;
-
-    return res.json({
-      success: true,
-      dockerfile,
-      dockerCompose,
-      githubWorkflow
-    });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
+    res.json({ success: true, project: present(saved) });
+  }),
+);
+router.get(
+  "/:id/export",
+  wrap(async (req, res) =>
+    res.json({ success: true, ...blueprint(req.project) }),
+  ),
+);
+// Do not persist plaintext runtime secrets or pretend toggles connect providers.
+router.put("/:id/env", (req, res) =>
+  res
+    .status(410)
+    .json({
+      success: false,
+      error:
+        "Store runtime secrets in your deployment provider’s secret manager.",
+    }),
+);
+router.put("/:id/integrations", (req, res) =>
+  res
+    .status(410)
+    .json({
+      success: false,
+      error:
+        "Configure integrations in your application and record evidence in stage 2.",
+    }),
+);
 module.exports = router;
