@@ -112,6 +112,8 @@ class User {
       email: cleanEmail,
       mobile: cleanMobile,
       passwordHash,
+      role: "user",
+      support: { status: "new", notes: "", updatedAt: null, updatedBy: null },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

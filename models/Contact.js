@@ -27,6 +27,8 @@ class Contact {
       message: message.trim(),
       preferredCloud: preferredCloud || "AWS / Cloud Provider",
       status: "new",
+      support: { status: "new", notes: "", updatedAt: null, updatedBy: null },
+      updatedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
     };
 

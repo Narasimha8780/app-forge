@@ -418,6 +418,7 @@ $("downloadBlueprintBtn").addEventListener("click", () => {
   try {
     const user = (await api("/auth/me")).user;
     currentUser = user;
+    $("adminLink").hidden = !user.isAdmin;
     $("userName").textContent = user.firstName + " " + user.lastName;
     $("userAvatar").textContent = (user.firstName || user.username || "U")
       .charAt(0)

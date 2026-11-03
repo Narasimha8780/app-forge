@@ -229,6 +229,7 @@ router.get("/me", authMiddleware, async (req, res) => {
         email: user.email,
         mobile: user.mobile,
         createdAt: user.createdAt,
+        isAdmin: user.role === "admin",
       },
     });
   } catch (err) {

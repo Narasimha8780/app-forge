@@ -22,6 +22,9 @@ router.post("/", async (req, res) => {
       });
     }
 
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || email.length > 254 || name.length > 120) {
+      return res.status(400).json({ success: false, error: "Provide a valid email address and a name of up to 120 characters." });
+    }
     const contactDoc = await Contact.create({
       name,
       email,
@@ -34,7 +37,7 @@ router.post("/", async (req, res) => {
     return res.status(201).json({
       success: true,
       message:
-        "Thank you! Your inquiry has been received. Our engineering team will assist your app setup promptly.",
+        "Thank you! Your inquiry has been received. Our team will review it and follow up using the contact details you provided.",
       contactId: contactDoc._id,
     });
   } catch (err) {

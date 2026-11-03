@@ -59,3 +59,7 @@ See [deployment jobs, live logs, DNS, and certificate setup](docs/OPERATIONS.md)
 ## Signup, GitHub, and pipeline behavior
 
 See [the user journey and pipeline guide](docs/PIPELINE.md) for explicit login after signup, an empty first dashboard, GitHub OAuth/repository selection, the eight manual gates, and the separate real deployment/log/DNS integrations. GitHub OAuth requires `APP_BASE_URL`, `GITHUB_CLIENT_ID`, and Secret Manager-backed `GITHUB_CLIENT_SECRET`.
+
+## Contact and customer support
+
+Visitors can use **Contact us** in the top navigation (`/contact`). The private customer success dashboard lives at `/admin/`, with its code and operator setup instructions in [admin/README.md](admin/README.md). It shares the application database and tracks new registrations, enquiries, follow-up status and internal notes. Access requires an explicitly assigned database admin role; ordinary accounts cannot read support records. No additional Cloud Run environment variables are required. Outreach is performed by your team, not automatically sent by this application.

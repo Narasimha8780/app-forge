@@ -67,6 +67,8 @@ app.use(
 );
 app.use("/api/projects", require("./routes/projects"));
 app.use("/api/contact", require("./routes/contact"));
+app.use("/api/admin", require("./admin/routes"));
+app.use("/admin", express.static(path.join(__dirname, "admin/public")));
 app.get("/api/health", async (req, res) => {
   try {
     await pingDB();
@@ -85,7 +87,7 @@ app.get("/api/health", async (req, res) => {
   }
 });
 app.use(express.static(path.join(__dirname, "public")));
-for (const page of ["auth", "dashboard"])
+for (const page of ["auth", "dashboard", "contact"])
   app.get("/" + page, (req, res) =>
     res.sendFile(path.join(__dirname, "public", page + ".html")),
   );

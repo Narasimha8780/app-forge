@@ -21,6 +21,7 @@ COPY --chown=node:node models ./models
 COPY --chown=node:node routes ./routes
 COPY --chown=node:node services ./services
 COPY --chown=node:node public ./public
+COPY --chown=node:node admin ./admin
 USER node
 EXPOSE 8080
 CMD ["node", "server.js"]
