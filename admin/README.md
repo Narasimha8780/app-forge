@@ -1,6 +1,6 @@
-# DevMatrix customer success console
+# CloudOps customer success console
 
-Open `/admin/` on the same service as DevMatrix. It uses the existing `DB_ENGINE`, `MONGO_URI` / `DATABASE_URL`, `DB_NAME` and signing configuration; there is no separate database or admin password environment variable. The production Docker image includes this folder.
+Open `/admin/` on the same service as CloudOps. It uses the existing `DB_ENGINE`, `MONGO_URI` / `DATABASE_URL`, `DB_NAME` and signing configuration; there is no separate database or admin password environment variable. The production Docker image includes this folder.
 
 Register an ordinary account, then an authorized operator runs the following from the repository root in a trusted shell with the **same database configuration as the deployed service**:
 

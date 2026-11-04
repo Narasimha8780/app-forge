@@ -1,4 +1,4 @@
-# DevMatrix Studio
+# CloudOps
 
 A requirements-first deployment planning workspace for Java, Node.js and Python apps on GCP, AWS or Azure. Users keep control of their cloud accounts; the primary workflow needs no cloud permissions or GitHub connection.
 
@@ -50,7 +50,7 @@ See [Cloud Run and Cloud Build setup](docs/DEPLOYMENT.md) for runtime ENVs, Secr
 - `DB_ENGINE=mongodb` — native MongoDB collections with account uniqueness indexes.
 - `DB_ENGINE=postgres` / `mysql` — SQL-backed JSON document store, account uniqueness constraints, parameterized queries, and optimistic updates.
 
-The database selected inside an application brief describes that application's architecture. It does not change the database used by DevMatrix itself; configure the platform's `DB_ENGINE` separately.
+The database selected inside an application brief describes that application's architecture. It does not change the database used by CloudOps itself; configure the platform's `DB_ENGINE` separately.
 
 ## Real operations
 

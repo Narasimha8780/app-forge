@@ -74,7 +74,7 @@ app.get("/api/health", async (req, res) => {
     await pingDB();
     res.json({
       status: "online",
-      appName: "DevMatrix Studio",
+      appName: "CloudOps",
       version: "2.0.0",
       uptime: `${Math.floor(process.uptime())}s`,
       database: getStatus(),
@@ -124,7 +124,7 @@ async function startServer(port = process.env.PORT || 5000) {
     s.on("error", reject);
   });
   console.log(
-    `DevMatrix Studio listening on port ${server.address().port}; database: ${getStatus().engine}`,
+    `CloudOps listening on port ${server.address().port}; database: ${getStatus().engine}`,
   );
   return server;
 }

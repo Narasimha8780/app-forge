@@ -1550,3 +1550,13 @@
     justify-content: center;
   }
 }
+
+@layer responsive {
+  @media (max-width: 600px) {
+    .site-nav { flex-wrap: wrap; row-gap: 14px; }
+    .site-nav > .actions { flex-wrap: wrap; }
+    .cta .actions { flex-wrap: wrap; min-width: 0; }
+    .cta .actions .button { max-width: 100%; white-space: normal; }
+    .process-grid { grid-template-columns: 1fr; }
+  }
+}

@@ -29,7 +29,7 @@ async function startServer(port=process.env.PORT||8080){
   if(process.env.NODE_ENV==='production'&&(!process.env.JWT_SECRET||process.env.JWT_SECRET.length<32))throw Error('Set JWT_SECRET to a stable random secret of at least 32 characters');
   await connectDB();return new Promise((resolve,reject)=>{const server=app.listen(port,'0.0.0.0',()=>resolve(server));server.on('error',reject);});
 }
-if(require.main===module){let server;startServer().then(s=>{server=s;console.log('DevMatrix Admin listening on port '+s.address().port);}).catch(async()=>{console.error('Admin startup failed. Check database and signing configuration.');await closeDB().catch(()=>{});process.exit(1);});
+if(require.main===module){let server;startServer().then(s=>{server=s;console.log('CloudOps Admin listening on port '+s.address().port);}).catch(async()=>{console.error('Admin startup failed. Check database and signing configuration.');await closeDB().catch(()=>{});process.exit(1);});
   const shutdown=()=>{const timer=setTimeout(()=>process.exit(1),9000);timer.unref();if(server)server.close(async()=>{await closeDB();process.exit(0);});};process.on('SIGTERM',shutdown);process.on('SIGINT',shutdown);
 }
 module.exports={app,startServer};

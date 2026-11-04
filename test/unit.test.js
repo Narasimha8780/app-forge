@@ -97,7 +97,7 @@ test("health checks active storage and pages serve with security headers", async
   for (const route of ["/", "/auth", "/dashboard"]) {
     const res = await fetch(base + route);
     assert.equal(res.status, 200);
-    assert.match(await res.text(), /devmatrix/i);
+    assert.match(await res.text(), /cloudops/i);
     assert.match(
       res.headers.get("content-security-policy"),
       /script-src 'self'/,
