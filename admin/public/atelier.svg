@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+ <linearGradient id="wall" x2="1" y2="1"><stop stop-color="#a8957b"/><stop offset=".55" stop-color="#d2bea0"/><stop offset="1" stop-color="#e0cfb5"/></linearGradient>
+ <linearGradient id="floor" x2="0" y2="1"><stop stop-color="#b39b80"/><stop offset="1" stop-color="#90775b"/></linearGradient>
+ <linearGradient id="sofa" x2="0" y2="1"><stop stop-color="#e0cfb5"/><stop offset="1" stop-color="#bca88c"/></linearGradient>
+ <linearGradient id="window"><stop stop-color="#f5e8c9"/><stop offset=".6" stop-color="#e8d6b6"/><stop offset="1" stop-color="#b4b18b"/></linearGradient>
+ <radialGradient id="light"><stop stop-color="#ffedc6" stop-opacity=".68"/><stop offset="1" stop-color="#ffedc6" stop-opacity="0"/></radialGradient>
+ <filter id="soft"><feGaussianBlur stdDeviation="7"/></filter>
+ <filter id="shadow"><feGaussianBlur stdDeviation="22"/></filter>
+</defs>
+<!-- Original vector room, not a frame or asset from the reference video. -->
+<path fill="url(#wall)" d="M0 0h1920v1080H0z"/>
+<path fill="#9f896f" d="M0 0h280v805L0 960z"/>
+<path fill="url(#floor)" d="M0 790h1920v290H0z"/>
+<path fill="#e0cfb5" d="M1770 0h150v790h-150z"/>
+<path fill="url(#window)" d="M1640 42h244v680h-244z"/>
+<path fill="#725940" fill-opacity=".65" d="M1624 0h15v780h-15zM1763 0h12v780h-12zM1884 0h14v780h-14zM1624 380h274v11h-274z"/>
+<path fill="#fff1d3" fill-opacity=".24" d="m1640 390-650 398H604l1036-690zM1775 395l-476 393h-131l607-585z"/>
+<ellipse cx="1340" cy="520" rx="900" ry="650" fill="url(#light)"/>
+<g filter="url(#soft)">
+ <circle cx="1080" cy="354" r="112" fill="#bca17b"/>
+ <circle cx="1070" cy="344" r="108" fill="#d5b88a"/>
+ <path fill="#cbb595" d="M740 292h8v205h-8z"/>
+ <ellipse cx="1110" cy="875" rx="525" ry="65" fill="#725940" opacity=".22" filter="url(#shadow)"/>
+ <rect x="520" y="586" width="980" height="170" rx="56" fill="url(#sofa)"/>
+ <rect x="465" y="678" width="1080" height="165" rx="45" fill="#cbb595"/>
+ <rect x="476" y="615" width="125" height="200" rx="40" fill="#d2bea0"/>
+ <rect x="1410" y="615" width="125" height="200" rx="40" fill="#d2bea0"/>
+ <rect x="630" y="625" width="210" height="125" rx="27" fill="#dcd0b5" transform="rotate(-7 735 688)"/>
+ <rect x="1180" y="622" width="180" height="135" rx="28" fill="#9b9672" transform="rotate(8 1270 689)"/>
+ <ellipse cx="1020" cy="881" rx="254" ry="90" fill="#725940" opacity=".4"/>
+ <path fill="#90775b" d="M819 791h24v131h-24zM1200 791h24v131h-24z"/>
+ <ellipse cx="1020" cy="782" rx="255" ry="57" fill="#a58056"/>
+ <ellipse cx="1020" cy="773" rx="255" ry="47" fill="#b79972"/>
+ <path fill="#b5a58a" d="M966 684h100l-12 97h-75z"/>
+ <g fill="#6f7950"><ellipse cx="1005" cy="676" rx="64" ry="26" transform="rotate(-25 1005 676)"/><ellipse cx="1045" cy="652" rx="58" ry="23" transform="rotate(20 1045 652)"/><ellipse cx="993" cy="626" rx="48" ry="19" transform="rotate(-45 993 626)"/></g>
+ <path fill="#8e7758" d="M205 657h110l-17 150h-77z"/>
+ <path stroke="#596042" stroke-width="9" d="M264 680V326"/>
+ <g fill="#69754b"><ellipse cx="227" cy="430" rx="27" ry="105" transform="rotate(-35 227 430)"/><ellipse cx="301" cy="471" rx="27" ry="115" transform="rotate(32 301 471)"/><ellipse cx="231" cy="553" rx="28" ry="91" transform="rotate(-54 231 553)"/><ellipse cx="291" cy="365" rx="24" ry="91" transform="rotate(30 291 365)"/></g>
+ <ellipse cx="240" cy="942" rx="165" ry="92" fill="#c7ad8b"/>
+</g>
+</svg>

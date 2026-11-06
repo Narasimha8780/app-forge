@@ -6,7 +6,7 @@ const token =
 let projects = [],
   current,
   selectedStep = 1,
-  activeView = "brief",
+  activeView = "overview",
   template,
   toastTimer,
   currentUser;
@@ -70,6 +70,11 @@ async function api(path, options = {}) {
 }
 function changeView(view) {
   activeView = view;
+  document.body.classList.toggle("is-overview", view === "overview");
+  if (current) {
+    $("pageTitle").textContent = view === "overview" ? "Deployment intelligence & planning" : current.name;
+    $("pageDescription").textContent = view === "overview" ? "Your applications, requirements and next steps — in one workspace." : "Plan deployment in your own cloud, from requirements to domain mapping.";
+  }
   document
     .querySelectorAll(".view")
     .forEach((e) => (e.hidden = e.id !== "view-" + view));
@@ -166,12 +171,39 @@ function render() {
         `<span class="pill ${c.passed ? "green" : ""}" title="${escapeHTML(c.passed ? "Complete" : c.action)}">${c.passed ? "✓" : "○"} ${escapeHTML(c.name)}</span>`,
     )
     .join("");
+  renderOverview();
   renderPlan();
   renderStages();
   renderActivity();
   window.githubConnection?.load(current);
   changeView(activeView);
 }
+function renderOverview() {
+  const data = projects.map(p => ({ project: p, passed: p.readiness.checks.filter(c => c.passed).length, total: p.readiness.checks.length }));
+  const shown = data.slice(0, 8);
+  const coords = shown.map((d, i) => [shown.length === 1 ? 300 : 35 + i * 530 / (shown.length - 1), 165 - (d.passed / d.total) * 130]);
+  const line = coords.map(p => p.join(',')).join(' ');
+  const area = coords.length ? `M ${coords[0][0]} 175 L ${coords.map(p => p.join(' ')).join(' L ')} L ${coords[coords.length - 1][0]} 175 Z` : '';
+  $("coverageChart").innerHTML = `<svg viewBox="0 0 600 205" role="img" aria-label="Saved requirement percentages for ${shown.length} applications"><defs><linearGradient id="coverageFill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#6b5638" stop-opacity=".25"/><stop offset="1" stop-color="#6b5638" stop-opacity="0"/></linearGradient></defs>${[35,100,165].map((y,i)=>`<line x1="25" y1="${y}" x2="575" y2="${y}" stroke="#72594020" stroke-dasharray="3 6"/><text x="4" y="${y+4}" class="chart-axis">${100-i*50}%</text>`).join('')}<path d="${area}" fill="url(#coverageFill)"/><polyline points="${line}" fill="none" stroke="#5d492f" stroke-width="2.5" stroke-linejoin="round"/>${coords.map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="4" fill="#eee6a0" stroke="#66502f" stroke-width="2"><title>${escapeHTML(shown[i].project.name)}: ${Math.round(shown[i].passed/shown[i].total*100)}%</title></circle><text x="${x}" y="197" text-anchor="middle" class="chart-axis">App ${i+1}</text>`).join('')}</svg><div class="chart-caption">${shown.map((d,i)=>`<span>${i+1}. ${escapeHTML(d.project.name)} · ${Math.round(d.passed/d.total*100)}%</span>`).join('')}</div>${data.length>8?'<small>Showing the first 8 applications. All apps appear below.</small>':''}`;
+  const checks = current.readiness.checks, complete = checks.filter(c => c.passed).length, missing = checks.length - complete;
+  $("overviewSelectedName").textContent = current.name;
+  $("requirementsRing").innerHTML = `<div class="donut" role="img" aria-label="${complete} of ${checks.length} requirements captured"><div><small>Captured</small><strong>${complete}<span>/${checks.length}</span></strong></div></div><div class="ring-legend"><p><i class="legend-dot filled"></i>Captured<strong>${complete}</strong></p><p><i class="legend-dot"></i>Still needed<strong>${missing}</strong></p><small>These are brief fields, not verified resources.</small><button class="button secondary" type="button" data-open-brief="${escapeHTML(current._id)}">Complete requirements ↗</button></div>`;
+  $("requirementsRing").querySelector(".donut").style.setProperty("--coverage", `${complete/checks.length*100}%`);
+  $("appCount").textContent = `${projects.length} application${projects.length===1?'':'s'}`;
+  $("applicationCards").innerHTML = data.map(({project:p,passed,total},i)=>{
+    const recorded=p.pipelineStages.filter(s=>s.evidence).length;
+    const next=p.readiness.checks.find(c=>!c.passed);
+    const cloud=p.deploymentPlan?.cloud||'Cloud not selected';
+    return `<article class="panel app-card"><div class="app-card-head"><span class="app-avatar">${escapeHTML(p.name.slice(0,2).toUpperCase())}</span><div><h3>${escapeHTML(p.name)}</h3><small>${escapeHTML(stacks[p.stack]||p.stack)}</small></div><span class="pill">${recorded}/8 evidence</span></div><span class="app-cloud">${escapeHTML(cloud)}</span><p class="app-next">${escapeHTML(next?next.action:'Requirements captured. Review your cloud-specific deployment approach.')}</p><div class="app-card-progress"><span>Requirements captured</span><strong>${passed}/${total}</strong></div><div class="progress"><span ></span></div><div class="app-card-footer"><small>${escapeHTML(databases[p.database]||p.database)}</small><button type="button" class="button" data-open-brief="${escapeHTML(p._id)}">Open app ↗</button></div></article>`;
+  }).join('');
+  $("applicationCards").querySelectorAll(".progress span").forEach((bar,i) => { bar.style.width = `${data[i].passed/data[i].total*100}%`; });
+}
+$("view-overview").addEventListener("click", event => {
+  const button = event.target.closest("[data-open-brief]");
+  if (!button) return;
+  activeView = "brief";
+  selectProject(button.dataset.openBrief);
+});
 function renderPlan() {
   const plan = current.deploymentPlan;
   if (!plan) return;

@@ -10,7 +10,7 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/css/glass.css">
 </head>
-  <body>
+  <body class="dashboard-page">
     <a class="skip" href="#main">Skip to workspace</a>
     <div class="workspace">
       <aside class="sidebar">
@@ -21,7 +21,8 @@
         <div>
           <p class="side-label">YOUR WORKSPACE</p>
           <nav class="side-nav" aria-label="Workspace">
-            <button type="button" class="active" data-view="brief">
+            <button type="button" class="active" data-view="overview">Dashboard</button>
+            <button type="button" data-view="brief">
               <span aria-hidden="true">▤</span>App requirements</button
             ><button type="button" data-view="pipeline">
               <span aria-hidden="true">↳</span>Deployment approach
@@ -116,6 +117,15 @@
                 ><span id="databaseValue">PostgreSQL</span>
               </div>
             </div>
+            <section id="view-overview" class="view" aria-label="Deployment dashboard">
+              <div class="overview-heading"><div><h2>Your cloud launch, at a glance.</h2><p>Saved requirements and owner-recorded evidence across your applications.</p></div><span class="pill">Your workspace · live records</span></div>
+              <div class="dashboard-charts">
+                <article class="panel coverage-panel"><div class="panel-head"><div><h2>Application planning coverage</h2><p>Requirements captured per app · not cloud readiness</p></div><span class="chart-legend"><i></i> Saved requirements</span></div><div id="coverageChart" class="coverage-chart"></div></article>
+                <article class="panel readiness-panel"><div class="panel-head"><div><h2>Selected app requirements</h2><p id="overviewSelectedName"></p></div></div><div id="requirementsRing" class="requirements-ring"></div></article>
+              </div>
+              <div class="overview-heading cards-heading"><div><h2>Applications & next steps</h2><p>Open an app to refine its brief or review its deployment approach.</p></div><span class="pill" id="appCount"></span></div>
+              <div id="applicationCards" class="application-cards"></div>
+            </section>
             <section id="view-brief" class="view">
               <div class="notice">
                 <strong>Tell us about your app first.</strong> CloudOps turns your requirements into a plan for deployment, testing, database setup, network and security, environment variables, error resolution and domain mapping. You run and verify the steps in your own cloud account; no cloud permissions are needed here.
