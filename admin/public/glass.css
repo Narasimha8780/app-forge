@@ -1,9 +1,39 @@
-/* The admin console shares CloudOps' sapphire, amethyst and champagne palette. */
-:root{color-scheme:dark;--ink:#edf3ff;--muted:#c0bfd9;--line:#b4ccff26;--accent:#f5d59a;--surface:linear-gradient(135deg,#ba9cff16,#9dafff05),#16162fe6}
-body{background:radial-gradient(ellipse at 10% 5%,#3454c35c,transparent 45%),radial-gradient(ellipse at 90% 35%,#862cc54a,transparent 40%),#090f21;background-attachment:fixed}.sidebar{background:#0b152ce0;border-right:1px solid var(--line);color:#b9c7df}.brand{color:#f5d59a}.brand span{color:#edf5ff;font-size:20px}.brand small{color:#a7bad3}.sidebar nav button{border:1px solid transparent;border-radius:12px}.sidebar nav button.active{background:linear-gradient(100deg,#a77cff26,#93caff0a);border-color:#b5ddff26;color:#e5d4ff}.sidebar-footer{border-color:var(--line)}header{background:#111b30bb;border-color:var(--line);color:#b7c4dc}header b{color:#e8f0ff}header button,#closeDetail{color:#bbc9e1}.heading h1{font-size:36px;letter-spacing:-1.5px}.eyebrow{color:#efcf9e}.metrics article,.panel{background:var(--surface);border-color:var(--line);border-radius:19px;box-shadow:0 15px 50px #02061740,inset 0 1px #ffffff10}.metrics article{position:relative;overflow:hidden}.metrics article::after{content:"";position:absolute;width:90px;height:90px;right:-25px;top:-30px;border-radius:50%;background:#9acfff12;filter:blur(15px);pointer-events:none}.metrics strong{color:#e7efff}.metrics article:nth-child(2) strong,.metrics article:nth-child(3) strong{color:#a9efda}.primary{background:linear-gradient(115deg,#ffe4ac,#e9bd76);border:1px solid #ffeacb99;border-radius:11px;color:#251b0d;box-shadow:0 5px 20px #88caff12}.secondary{background:#b7d0ff09;border-color:#b7d0ff30;border-radius:11px;color:#dbe6fc}input,select,textarea{background:#0a1328c9;color:#eaf2ff;border-color:#b8ceff30;border-radius:10px}input::placeholder,textarea::placeholder{color:#8e9fbd}select option{background:#14213a;color:#eff5ff}th{background:#c3d8ff05;color:#aebdd8}th,td{border-color:#b8ceff16}tbody tr:hover{background:#b8ceff06}td button{background:#a6e9d910;color:#b7f1df;border:1px solid #a6e9d924;border-radius:9px}.badge{background:#b6ccff12;color:#cad8f3;border:1px solid #b6ccff20}.badge.new{background:#8cb9ff16;color:#bdd6ff}.badge.contacted{background:#b29aff16;color:#d7c7ff}.badge.in_progress{background:#f8d58f16;color:#f5d699}.badge.resolved{background:#8ce3bf16;color:#b3f1d7}.support-note{background:linear-gradient(100deg,#93d8c90d,#96c7ff08);border-color:#a4ead3;border-radius:0 14px 14px 0;color:#cde9e2}.support-note p{color:#afc9cc}dialog{background:#17223af7;border:1px solid #bdd4ff3b;box-shadow:0 35px 110px #0008;color:#eef4ff;border-radius:22px}dialog::backdrop{background:#02091ba8;backdrop-filter:blur(8px)}#recordDetails{background:#07132a7d;border:1px solid #bbd2ff20;border-radius:13px}#accessStatus{color:#ffc2cb}.security-dot{box-shadow:0 0 14px #6fe5b180}.login-page .panel{box-shadow:0 30px 100px #0005}.login-form .primary{padding:14px}
-@supports(backdrop-filter:blur(1px)){.sidebar,header,.panel,.metrics article{backdrop-filter:blur(22px) saturate(125%);-webkit-backdrop-filter:blur(22px) saturate(125%)}}
-@media(max-width:700px){body{background-attachment:scroll}.heading h1{font-size:30px}.sidebar{border-bottom:1px solid var(--line)}header{height:auto;min-height:64px;gap:12px;flex-wrap:wrap;padding:14px 18px}.panel-title{flex-wrap:wrap}.metrics article{border-radius:15px}.brand span{font-size:19px}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-@media(prefers-contrast:more){:root{--muted:#d3ddf0;--line:#b2c7e077;--surface:#121c32}.panel,.sidebar,header,.metrics article{backdrop-filter:none;background:#121c32}}
-
-.metrics article:nth-child(1){border-top:2px solid #b89aff70}.metrics article:nth-child(2){border-top:2px solid #f0cb8670}.metrics article:nth-child(3){border-top:2px solid #83d5ff70}.metrics article:nth-child(4){border-top:2px solid #e5a5d870}.metrics article:nth-child(2) strong{color:#f5d59a}.metrics article:nth-child(3) strong{color:#9cddff}.primary:hover{filter:brightness(1.08)}.brand{color:#f5d59a}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline-color:#f5d59a}
+/* CloudOps • Daylight glass customer-success console. */
+:root { color-scheme: light; --ink: #2f3528; --muted: #626a55; --line: #747e512b; --accent: #50672e; --surface: linear-gradient(135deg,#ffffffb3,#fffce952),#eee9dbc9; }
+body { background: radial-gradient(ellipse at 90% 5%,#faf7ccaa,transparent 45%),radial-gradient(ellipse at 10% 65%,#9eaf7e36,transparent 35%),linear-gradient(120deg,#e0dacb,#f4efdf 55%,#e3dece); background-attachment: fixed; isolation: isolate; }
+body::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(110deg,transparent 62%,#fff6 62.2%,#fff0 70%),repeating-linear-gradient(90deg,transparent 0 23%,#605c4409 23.2% 23.6%,#fff6 23.8% 24%,transparent 24.2% 47%); mask-image:linear-gradient(#000,#0003); }
+.sidebar { background:#eeebddab; border-right:1px solid #fff9; color:#5c664d; }
+.brand { color:#55672f; } .brand span { color:#30392b; font-size:20px; } .brand small { color:#6d775c; }
+.nav-label { color:#707a5e; }
+.sidebar nav button { border:1px solid transparent; border-radius:100px; }
+.sidebar nav button.active { background:#e1eaa3b8; border-color:#a8b65c4d; color:#3c4b21; box-shadow:inset 0 1px #fff9; }
+.sidebar-footer { border-color:var(--line); } .sidebar-footer p { color:#677457; }
+header { background:#f4f0e4a3; border-color:#ffffffad; color:#606d51; } header b { color:#3b482f; }
+header button,#closeDetail { color:#5d6c4b; }
+.heading h1 { font-size:36px; letter-spacing:-1.5px; } .eyebrow { color:#5f713e; }
+.metrics article,.panel { background:var(--surface); border:1px solid #ffffffbd; border-radius:23px; box-shadow:0 18px 50px #5c4c2514,inset 0 1px #ffffffd4; }
+.metrics article { position:relative; overflow:hidden; }
+.metrics article::after { content:""; position:absolute; width:100px; height:100px; right:-20px; top:-30px; border-radius:50%; background:#d5e27138; filter:blur(15px); pointer-events:none; }
+.metrics article:nth-child(2) { background:radial-gradient(ellipse at 100% 0,#ecf19c99,transparent 65%),var(--surface); }
+.metrics strong,.metrics article:nth-child(2) strong,.metrics article:nth-child(3) strong { color:#3b4b27; }
+.primary { background:#323b2b; color:#f5f8e8; border:1px solid #323b2b; border-radius:100px; box-shadow:0 5px 18px #333a2521; }
+.primary:hover { background:#4c593b; }
+.secondary { background:#fffbed6b; color:#43512f; border:1px solid #7d875047; border-radius:100px; }
+input,select,textarea { background:#fffff6a3; color:#35422c; border-color:#7e8b5452; border-radius:12px; }
+input::placeholder,textarea::placeholder { color:#707b5f; } select option { background:#f6f4e6; color:#35422c; }
+th { background:#e9e9d94d; color:#5b6849; } th,td { border-color:#7f89522b; }
+tbody tr:hover { background:#fffcee80; } td button { background:#e4ecb49c; color:#43562d; border:1px solid #9ba9564d; border-radius:100px; }
+.badge { background:#f1f1dd; color:#5f6948; border:1px solid #8b945236; }
+.badge.new { background:#e8edba; color:#56632a; }.badge.contacted { background:#ece1c7; color:#725a2c; }
+.badge.in_progress { background:#f6e8b8; color:#7b6022; }.badge.resolved { background:#e0ebd0; color:#416336; }
+.support-note { background:#e5eacb70; border-color:#9baa5b; border-radius:0 16px 16px 0; color:#45582f; }.support-note p { color:#606f48; }
+dialog { background:#f4f0e4f5; color:#33422c; border:1px solid #fff; box-shadow:0 35px 110px #3d3c234d; border-radius:25px; }
+dialog::backdrop { background:#3f43294f; backdrop-filter:blur(8px); }
+#recordDetails { background:#e8ecd38c; border:1px solid #a8b27b42; border-radius:15px; }
+#accessStatus { color:#923e36; }.security-dot { background:#879e4b; box-shadow:0 0 0 4px #9baa5b1c; }
+.login-page .panel { box-shadow:0 30px 90px #6b5c2824; }.login-form .primary { padding:14px; }
+:where(a,button,input,select,textarea):focus-visible { outline:3px solid #687d36; outline-offset:4px; }
+@supports(backdrop-filter:blur(1px)) { .sidebar,header,.panel,.metrics article { backdrop-filter:blur(22px) saturate(110%); -webkit-backdrop-filter:blur(22px) saturate(110%); } }
+@media(max-width:700px) { body { background-attachment:scroll; }.heading h1 { font-size:30px; }.sidebar { border-bottom:1px solid #fff9; }header { height:auto; min-height:64px; gap:12px; flex-wrap:wrap; padding:14px 18px; }.panel-title { flex-wrap:wrap; }.metrics article { border-radius:19px; }.brand span { font-size:19px; } }
+@media(prefers-reduced-motion:reduce) { * { scroll-behavior:auto!important; transition:none!important; animation:none!important; } }
+@media(prefers-contrast:more) { :root { --muted:#424e34;--line:#66714b88;--surface:#f7f4e6; }.panel,.sidebar,header,.metrics article { backdrop-filter:none; background:#f7f4e6; } }
